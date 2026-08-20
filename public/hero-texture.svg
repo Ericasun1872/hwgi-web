@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <defs>
+    <linearGradient id="room" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a120c"/>
+      <stop offset="38%" stop-color="#2a1c12"/>
+      <stop offset="72%" stop-color="#0e1a2c"/>
+      <stop offset="100%" stop-color="#061018"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="50%" cy="18%" r="55%">
+      <stop offset="0%" stop-color="#f4d48a" stop-opacity="0.42"/>
+      <stop offset="42%" stop-color="#c5a028" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#0a1a28" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3a2416"/>
+      <stop offset="50%" stop-color="#5a3a22"/>
+      <stop offset="100%" stop-color="#2c1a10"/>
+    </linearGradient>
+    <linearGradient id="shelf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6b4a2c"/>
+      <stop offset="100%" stop-color="#2a160c"/>
+    </linearGradient>
+    <linearGradient id="goldline" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e6c35c" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#e8d89a" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#e6c35c" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grain" width="140" height="90" patternUnits="userSpaceOnUse">
+      <path d="M0 20 C30 18, 50 26, 90 22 S130 16, 140 20" stroke="#c9a56a" stroke-opacity="0.06" fill="none"/>
+      <path d="M0 55 C40 50, 70 62, 110 54 S130 48, 140 52" stroke="#8a6240" stroke-opacity="0.05" fill="none"/>
+    </pattern>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#room)"/>
+  <rect width="1920" height="1080" fill="url(#grain)"/>
+  <rect width="1920" height="1080" fill="url(#lamp)"/>
+
+  <!-- left bookshelf -->
+  <g opacity="0.92">
+    <rect x="0" y="70" width="290" height="920" fill="url(#wood)"/>
+    <rect x="18" y="96" width="250" height="18" fill="url(#shelf)"/>
+    <rect x="18" y="268" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="18" y="440" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="18" y="612" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="18" y="784" width="250" height="16" fill="url(#shelf)"/>
+    <g>
+      <rect x="32" y="128" width="28" height="132" fill="#2b1d3a"/>
+      <rect x="64" y="118" width="22" height="142" fill="#7a2e28"/>
+      <rect x="90" y="136" width="34" height="124" fill="#1d3550"/>
+      <rect x="128" y="122" width="18" height="138" fill="#c5a028"/>
+      <rect x="150" y="140" width="40" height="120" fill="#3e2a18"/>
+      <rect x="194" y="126" width="26" height="134" fill="#24402e"/>
+      <rect x="224" y="148" width="22" height="112" fill="#5c1f2a"/>
+      <rect x="36" y="300" width="24" height="132" fill="#16324a"/>
+      <rect x="64" y="288" width="36" height="144" fill="#8b5a2b"/>
+      <rect x="104" y="312" width="20" height="120" fill="#2f1a28"/>
+      <rect x="128" y="296" width="30" height="136" fill="#0f2f28"/>
+      <rect x="162" y="308" width="18" height="124" fill="#d4b56a"/>
+      <rect x="184" y="284" width="42" height="148" fill="#4a2230"/>
+      <rect x="230" y="318" width="20" height="114" fill="#1a2740"/>
+      <rect x="34" y="472" width="40" height="132" fill="#3a2818"/>
+      <rect x="78" y="458" width="22" height="146" fill="#6e2a22"/>
+      <rect x="104" y="480" width="28" height="124" fill="#203848"/>
+      <rect x="136" y="466" width="16" height="138" fill="#c9a44a"/>
+      <rect x="156" y="474" width="38" height="130" fill="#2a3a28"/>
+      <rect x="198" y="456" width="24" height="148" fill="#4a3048"/>
+      <rect x="226" y="486" width="22" height="118" fill="#7a4a20"/>
+      <rect x="32" y="644" width="26" height="132" fill="#1c2c3c"/>
+      <rect x="62" y="632" width="32" height="144" fill="#5c241c"/>
+      <rect x="98" y="652" width="20" height="124" fill="#d8c48a"/>
+      <rect x="122" y="640" width="44" height="136" fill="#243428"/>
+      <rect x="170" y="656" width="18" height="120" fill="#3a1840"/>
+      <rect x="192" y="636" width="30" height="140" fill="#8a6230"/>
+      <rect x="226" y="648" width="22" height="128" fill="#102838"/>
+    </g>
+  </g>
+
+  <!-- right bookshelf -->
+  <g opacity="0.9">
+    <rect x="1630" y="70" width="290" height="920" fill="url(#wood)"/>
+    <rect x="1652" y="96" width="250" height="18" fill="url(#shelf)"/>
+    <rect x="1652" y="268" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="1652" y="440" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="1652" y="612" width="250" height="16" fill="url(#shelf)"/>
+    <rect x="1652" y="784" width="250" height="16" fill="url(#shelf)"/>
+    <g>
+      <rect x="1668" y="126" width="30" height="134" fill="#4a2030"/>
+      <rect x="1702" y="118" width="22" height="142" fill="#1d3550"/>
+      <rect x="1728" y="140" width="36" height="120" fill="#7a4a20"/>
+      <rect x="1768" y="122" width="18" height="138" fill="#e6c35c"/>
+      <rect x="1790" y="132" width="42" height="128" fill="#2a1c14"/>
+      <rect x="1836" y="148" width="24" height="112" fill="#24402e"/>
+      <rect x="1864" y="128" width="20" height="132" fill="#6e2a22"/>
+      <rect x="1670" y="296" width="26" height="136" fill="#16324a"/>
+      <rect x="1700" y="284" width="38" height="148" fill="#8b5a2b"/>
+      <rect x="1742" y="312" width="18" height="120" fill="#2f1a28"/>
+      <rect x="1764" y="300" width="32" height="132" fill="#0f2f28"/>
+      <rect x="1800" y="288" width="20" height="144" fill="#d4b56a"/>
+      <rect x="1824" y="308" width="40" height="124" fill="#3e2230"/>
+      <rect x="1868" y="318" width="16" height="114" fill="#1a2740"/>
+      <rect x="1666" y="468" width="34" height="136" fill="#3a2818"/>
+      <rect x="1704" y="456" width="22" height="148" fill="#5c241c"/>
+      <rect x="1730" y="480" width="28" height="124" fill="#203848"/>
+      <rect x="1762" y="462" width="16" height="142" fill="#c9a44a"/>
+      <rect x="1782" y="474" width="40" height="130" fill="#2a3a28"/>
+      <rect x="1826" y="454" width="24" height="150" fill="#4a3048"/>
+      <rect x="1854" y="486" width="28" height="118" fill="#7a4a20"/>
+    </g>
+  </g>
+
+  <!-- center window / lamp glow -->
+  <ellipse cx="960" cy="210" rx="220" ry="90" fill="#f6e7b8" opacity="0.16"/>
+  <rect x="820" y="70" width="280" height="210" rx="4" fill="#1c2838" opacity="0.35" stroke="#e8d89a" stroke-opacity="0.22"/>
+  <line x1="960" y1="70" x2="960" y2="280" stroke="#e8d89a" stroke-opacity="0.18"/>
+  <line x1="820" y1="175" x2="1100" y2="175" stroke="#e8d89a" stroke-opacity="0.18"/>
+
+  <!-- writing desk silhouette -->
+  <rect x="620" y="820" width="680" height="28" rx="3" fill="#4a3220"/>
+  <rect x="640" y="848" width="28" height="140" fill="#2c1c12"/>
+  <rect x="1252" y="848" width="28" height="140" fill="#2c1c12"/>
+  <ellipse cx="780" cy="808" rx="46" ry="14" fill="#1a120c" opacity="0.55"/>
+  <rect x="760" y="742" width="18" height="68" rx="8" fill="#d8c48a" opacity="0.7"/>
+  <ellipse cx="769" cy="738" rx="22" ry="10" fill="#f4d48a" opacity="0.55"/>
+
+  <!-- gold salon ornaments -->
+  <path d="M420 140 C520 90, 640 110, 720 70" stroke="url(#goldline)" stroke-width="1.2" fill="none"/>
+  <path d="M1200 70 C1320 110, 1440 90, 1540 150" stroke="url(#goldline)" stroke-width="1.2" fill="none"/>
+  <path d="M480 980 C700 920, 1220 920, 1440 980" stroke="url(#goldline)" stroke-width="1.1" fill="none"/>
+</svg>
