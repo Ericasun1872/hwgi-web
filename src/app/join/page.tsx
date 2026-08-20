@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CtaLink } from "@/components/CtaLink";
 import { PolicyLinks } from "@/components/PolicyLinks";
-import { buildMetadata } from "@/lib/site";
+import { APP_STORE_URL, buildMetadata, PLAY_STORE_URL } from "@/lib/site";
 
 export const metadata: Metadata = buildMetadata({
   title: "가입 안내",
@@ -12,9 +12,6 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function JoinPage() {
-  const appStore = process.env.NEXT_PUBLIC_APP_STORE_URL;
-  const playStore = process.env.NEXT_PUBLIC_PLAY_STORE_URL;
-
   return (
     <div className="page">
       <header className="page-header">
@@ -73,14 +70,12 @@ export default function JoinPage() {
         <CtaLink href="/login" variant="gold">
           웹 로그인
         </CtaLink>
-        {appStore ? (
-          <CtaLink href={appStore} variant="gold">
+        <CtaLink href={PLAY_STORE_URL} variant="gold">
+          Google Play
+        </CtaLink>
+        {APP_STORE_URL ? (
+          <CtaLink href={APP_STORE_URL} variant="gold">
             App Store
-          </CtaLink>
-        ) : null}
-        {playStore ? (
-          <CtaLink href={playStore} variant="gold">
-            Google Play
           </CtaLink>
         ) : null}
       </div>

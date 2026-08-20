@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CONTACT, SITE_NAME_EN, SITE_NAME_KO } from "@/lib/site";
+import { CONTACT, PLAY_STORE_URL, SITE_NAME_EN, SITE_NAME_KO } from "@/lib/site";
 
 export function SiteFooter() {
   const emailHref = `mailto:${CONTACT.email}`;
@@ -26,6 +26,9 @@ export function SiteFooter() {
         </div>
         <div className="site-footer__links">
           <Link href="/join">가입 안내</Link>
+          <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
+            Android 앱
+          </a>
           <Link href="/terms">이용약관</Link>
           <Link href="/bylaws">정관</Link>
           <Link href="/privacy">개인정보</Link>

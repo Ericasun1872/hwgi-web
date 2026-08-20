@@ -12,6 +12,14 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   "https://wak-usa.org";
 
+/** Android package: com.hwgi.writerapp */
+export const PLAY_STORE_URL =
+  process.env.NEXT_PUBLIC_PLAY_STORE_URL?.trim() ||
+  "https://play.google.com/store/apps/details?id=com.hwgi.writerapp";
+
+export const APP_STORE_URL =
+  process.env.NEXT_PUBLIC_APP_STORE_URL?.trim() || "";
+
 /** Footer contact — email only (no personal phone on public web) */
 export const CONTACT = {
   roleKo: "지회장",
