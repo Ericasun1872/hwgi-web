@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { BoardPhoto } from "@/components/BoardPhoto";
 import { CommentForm } from "@/components/CommentForm";
 import { CommentList } from "@/components/CommentList";
 import { DeletePostButton } from "@/components/DeletePostButton";
 import { EditPostForm } from "@/components/EditPostForm";
+import { JsonLd } from "@/components/JsonLd";
 import { getCommentsForPost, getPost } from "@/lib/firestore";
+import { formatBoardBody } from "@/lib/format-body";
+import { creativeWorkJsonLd, postMetaDescription } from "@/lib/seo";
 import { boardMeta, buildMetadata, isBoardKind } from "@/lib/site";
 
 type Props = { params: Promise<{ kind: string; id: string }> };
@@ -15,10 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!isBoardKind(kind)) return {};
   const post = await getPost(kind, id);
   if (!post) return {};
-  const meta = boardMeta(kind);
   return buildMetadata({
     title: post.title || "작품",
-    description: `${post.authorName} — ${meta?.labelKo ?? kind} · 미주지회`,
+    description: postMetaDescription(post),
     path: `/boards/${kind}/${id}`,
   });
 }
@@ -40,6 +43,7 @@ export default async function PostDetailPage({ params }: Props) {
 
   return (
     <div className="page">
+      <JsonLd data={creativeWorkJsonLd(post, kind)} />
       <article className="post-article">
         <header>
           <p style={{ marginBottom: "0.75rem", fontSize: "0.9rem" }}>
@@ -57,12 +61,14 @@ export default async function PostDetailPage({ params }: Props) {
 
         {imageSrc ? (
           <figure className="post-image">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imageSrc} alt="" />
+            <BoardPhoto
+              src={imageSrc}
+              trimLetterbox={kind === "dica" || kind === "dansang"}
+            />
           </figure>
         ) : null}
 
-        <div className="post-body">{post.body}</div>
+        <div className="post-body">{formatBoardBody(kind, post.body)}</div>
 
         <div className="post-actions">
           <EditPostForm kind={kind} post={post} />

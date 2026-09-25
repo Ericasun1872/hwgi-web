@@ -26,6 +26,8 @@ export function SiteFooter() {
         </div>
         <div className="site-footer__links">
           <Link href="/join">가입 안내</Link>
+          <Link href="/ebooks">작품집</Link>
+          <Link href="/sponsors">후원</Link>
           <a href={PLAY_STORE_URL} target="_blank" rel="noopener noreferrer">
             Android 앱
           </a>
@@ -37,6 +39,10 @@ export function SiteFooter() {
         </div>
         <p className="site-footer__note">
           승인 회원은 웹·앱에서 작품·댓글 작성 · Members may post on web or app
+        </p>
+        <p className="site-footer__note">
+          후원·광고 문의:{" "}
+          <a href={emailHref}>{CONTACT.email}</a>
         </p>
       </div>
     </footer>

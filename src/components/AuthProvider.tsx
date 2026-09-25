@@ -234,6 +234,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, member, loading, error, login, logout, resetPassword],
   );
 
+  const isAdmin = isAdminEmail(user?.email ?? member?.email);
+
+  useEffect(() => {
+    if (!isAdmin || loading) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const { purgeSuppressedBoardPosts } = await import("@/lib/board-write");
+        if (cancelled) return;
+        await purgeSuppressedBoardPosts();
+      } catch {
+        // 권한·네트워크 오류는 무시 (숨김 필터가 웹 표시를 막음)
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdmin, loading]);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

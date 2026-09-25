@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { EventsAdminLink } from "@/components/ContestAdminLink";
 import { EventsPageClient } from "@/components/EventsPageClient";
+import { JsonLd } from "@/components/JsonLd";
 import { PolicyLinks } from "@/components/PolicyLinks";
 import { getChapterEvents } from "@/lib/firestore";
+import { eventsListJsonLd } from "@/lib/seo";
 import { buildMetadata } from "@/lib/site";
 import type { ChapterEvent } from "@/lib/types";
 
@@ -51,6 +53,7 @@ export default async function EventsPage() {
 
   return (
     <div className="page">
+      <JsonLd data={eventsListJsonLd(events)} />
       <header className="page-header">
         <h1>행사 안내</h1>
         <p>

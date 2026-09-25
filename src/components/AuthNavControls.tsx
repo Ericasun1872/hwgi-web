@@ -14,7 +14,12 @@ const ADMIN_LINKS = [
   { href: "/admin/about", label: "소개 관리" },
 ] as const;
 
-export function AuthNavControls() {
+type Props = {
+  /** 메뉴 항목으로 이동할 때만 호출 (모바일 햄버거 닫기용) */
+  onNavigate?: () => void;
+};
+
+export function AuthNavControls({ onNavigate }: Props) {
   const { user, member, loading, logout, canWrite, isAdmin } = useAuth();
   const [adminOpen, setAdminOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -22,7 +27,7 @@ export function AuthNavControls() {
 
   useEffect(() => {
     if (!adminOpen) return;
-    function onDocClick(e: MouseEvent) {
+    function onDocPointer(e: Event) {
       if (!menuRef.current?.contains(e.target as Node)) {
         setAdminOpen(false);
       }
@@ -30,10 +35,11 @@ export function AuthNavControls() {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setAdminOpen(false);
     }
-    document.addEventListener("mousedown", onDocClick);
+    // touch/mouse 모두 — mousedown만 쓰면 모바일에서 어긋날 수 있음
+    document.addEventListener("pointerdown", onDocPointer);
     window.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("pointerdown", onDocPointer);
       window.removeEventListener("keydown", onKey);
     };
   }, [adminOpen]);
@@ -44,7 +50,7 @@ export function AuthNavControls() {
 
   if (!user || !member) {
     return (
-      <Link href="/login" className="auth-nav">
+      <Link href="/login" className="auth-nav" onClick={() => onNavigate?.()}>
         <span>로그인</span>
         <small>Login</small>
       </Link>
@@ -65,20 +71,32 @@ export function AuthNavControls() {
               className="auth-nav-user__admin-toggle"
               aria-expanded={adminOpen}
               aria-controls={menuId}
-              onClick={() => setAdminOpen((v) => !v)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setAdminOpen((v) => !v);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
             >
               운영진
               <span aria-hidden>{adminOpen ? "▴" : "▾"}</span>
             </button>
             {adminOpen ? (
-              <div id={menuId} className="auth-nav-user__admin-panel" role="menu">
+              <div
+                id={menuId}
+                className="auth-nav-user__admin-panel"
+                role="menu"
+                onPointerDown={(e) => e.stopPropagation()}
+              >
                 {ADMIN_LINKS.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     className="auth-nav-user__admin"
                     role="menuitem"
-                    onClick={() => setAdminOpen(false)}
+                    onClick={() => {
+                      setAdminOpen(false);
+                      onNavigate?.();
+                    }}
                   >
                     {item.label}
                   </Link>
@@ -90,7 +108,10 @@ export function AuthNavControls() {
         <button
           type="button"
           className="auth-nav-user__out"
-          onClick={() => logout()}
+          onClick={() => {
+            void logout();
+            onNavigate?.();
+          }}
         >
           로그아웃
         </button>

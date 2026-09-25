@@ -67,8 +67,8 @@ export function SiteHeader() {
                 </Link>
               );
             })}
-            <div className="site-nav__auth" onClick={() => setOpen(false)}>
-              <AuthNavControls />
+            <div className="site-nav__auth">
+              <AuthNavControls onNavigate={() => setOpen(false)} />
             </div>
           </nav>
         </div>

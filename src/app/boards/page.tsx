@@ -57,6 +57,17 @@ export default function BoardsPage() {
       </div>
 
       <WriteCta />
+
+      <p className="phase-note" style={{ marginTop: "2rem" }}>
+        장르별 작품을 모아 전자 작품집으로 보려면{" "}
+        <Link
+          href="/ebooks"
+          style={{ borderBottom: "1px solid var(--gold-line)" }}
+        >
+          작품집 · 전자책
+        </Link>
+        으로 이동하세요.
+      </p>
     </div>
   );
 }

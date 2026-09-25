@@ -4,10 +4,15 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   serverTimestamp,
   setDoc,
   Timestamp,
 } from "firebase/firestore";
+import {
+  isSuppressedPost,
+  SUPPRESSED_POST_IDS,
+} from "@/lib/content-suppression";
 import { getDb } from "@/lib/firebase";
 import { authorKeyFromEmail, memberDisplayName, type ChapterMember } from "@/lib/member";
 import type { BoardKind } from "@/lib/types";
@@ -22,6 +27,11 @@ export async function createBoardPost(input: {
   hasBakedText?: boolean;
 }): Promise<string> {
   const email = input.member.email.trim().toLowerCase();
+  const authorName =
+    input.authorName.trim() || memberDisplayName(input.member);
+  if (isSuppressedPost({ authorName })) {
+    throw new Error("이 작성자 이름으로 글을 등록할 수 없습니다.");
+  }
   const id = `${input.kind}_web_${Date.now()}`;
   const data: Record<string, unknown> = {
     id,
@@ -29,7 +39,7 @@ export async function createBoardPost(input: {
     boardType: input.kind,
     authorEmail: email,
     authorKey: authorKeyFromEmail(email),
-    authorName: input.authorName.trim() || memberDisplayName(input.member),
+    authorName,
     title: input.title.trim(),
     body: input.body.trim(),
     imageAsset: null,
@@ -150,6 +160,27 @@ export async function deleteBoardComment(commentId: string): Promise<void> {
 /** 운영진(또는 작성자·Firestore 규칙): 게시글 삭제 */
 export async function deleteBoardPost(postId: string): Promise<void> {
   await deleteDoc(doc(getDb(), "board_posts", postId));
+}
+
+/**
+ * 숨김 대상(마틸다 시드 등) 글을 Firestore에서 제거.
+ * 운영진 로그인 시 한 번 실행해 재업로드된 시드를 지웁니다.
+ */
+export async function purgeSuppressedBoardPosts(): Promise<number> {
+  const snap = await getDocs(collection(getDb(), "board_posts"));
+  let removed = 0;
+  for (const d of snap.docs) {
+    const data = d.data();
+    const authorName = String(data.authorName ?? "");
+    if (
+      SUPPRESSED_POST_IDS.has(d.id) ||
+      isSuppressedPost({ id: d.id, authorName })
+    ) {
+      await deleteDoc(doc(getDb(), "board_posts", d.id));
+      removed += 1;
+    }
+  }
+  return removed;
 }
 
 /** Compress image to JPEG base64, target under ~400KB. */

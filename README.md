@@ -21,7 +21,9 @@ http://localhost:3000
 | `/events` | 행사 (`chapter_events`) |
 | `/contest` | 공모전 (`event_contest_2026` + 고정 카피) |
 | `/boards` · `/boards/[kind]` · `/boards/[kind]/[id]` | 게시판·댓글 읽기 |
+| `/ebooks` · `/ebooks/[kind]` | 장르별 작품집 · PDF 저장 |
 | `/join` | 가입 · 앱 안내 |
+| `/sponsors` | 후원 · 광고 안내 |
 
 1단계는 **읽기 전용**. 글쓰기·댓글·로그인은 회원 앱에서.
 

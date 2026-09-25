@@ -140,9 +140,9 @@ export function AboutPageClient({ initialGreeting, initialOrg }: Props) {
       {org ? (
         <section aria-labelledby="org-heading">
           <header className="page-header">
-            <h1 id="org-heading" style={{ fontSize: "1.75rem" }}>
+            <h2 id="org-heading" style={{ fontSize: "1.75rem" }}>
               미주지회 조직
-            </h1>
+            </h2>
             <p>
               USA Chapter Organization
               <span className="en">임원 · 사무국 · 위원회 · 분과</span>

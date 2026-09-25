@@ -91,6 +91,21 @@ export default function JoinPage() {
         에서 승인 대기 목록을 확인하고 승인·반려할 수 있습니다. (앱 「회원
         관리」에서도 동일하게 가능합니다.)
       </p>
+
+      <section className="join-sponsors" aria-label="후원 안내">
+        <h2>후원으로 문학의 자리를 함께</h2>
+        <p>
+          미주지회의 모임·공모전·작품 나눔은 후원자와 파트너의 응원으로
+          이어집니다. 후원·광고 문의는{" "}
+          <Link
+            href="/sponsors"
+            style={{ borderBottom: "1px solid var(--gold-line)" }}
+          >
+            후원 안내
+          </Link>
+          에서 확인하세요.
+        </p>
+      </section>
     </div>
   );
 }

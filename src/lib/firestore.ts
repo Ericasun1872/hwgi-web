@@ -9,6 +9,8 @@ import {
   type Timestamp,
 } from "firebase/firestore";
 import { getDb } from "./firebase";
+import { isSuppressedPost } from "./content-suppression";
+import { BOARD_KINDS } from "./site";
 import type {
   BoardComment,
   BoardKind,
@@ -365,7 +367,8 @@ export async function getPostsByKind(kind: BoardKind): Promise<BoardPost[]> {
     const snap = await getDocs(q);
     return snap.docs
       .map((d) => mapPost(d.id, d.data()))
-      .filter((p): p is BoardPost => p !== null);
+      .filter((p): p is BoardPost => p !== null)
+      .filter((p) => !isSuppressedPost(p));
   } catch {
     // Fallback without composite index / orderBy
     try {
@@ -376,7 +379,8 @@ export async function getPostsByKind(kind: BoardKind): Promise<BoardPost[]> {
       const snap = await getDocs(q);
       const posts = snap.docs
         .map((d) => mapPost(d.id, d.data()))
-        .filter((p): p is BoardPost => p !== null);
+        .filter((p): p is BoardPost => p !== null)
+        .filter((p) => !isSuppressedPost(p));
       posts.sort((a, b) =>
         (b.createdAt ?? "").localeCompare(a.createdAt ?? ""),
       );
@@ -385,6 +389,17 @@ export async function getPostsByKind(kind: BoardKind): Promise<BoardPost[]> {
       return [];
     }
   }
+}
+
+/** 사이트맵·일괄 목록용 — 전 장르 게시글 */
+export async function getAllBoardPosts(): Promise<BoardPost[]> {
+  const lists = await Promise.all(
+    BOARD_KINDS.map((b) => getPostsByKind(b.kind)),
+  );
+  return lists.flat().map((p) => ({
+    ...p,
+    kind: p.kind || p.boardType || "",
+  }));
 }
 
 export async function getPost(
@@ -396,6 +411,7 @@ export async function getPost(
     if (!snap.exists()) return null;
     const post = mapPost(snap.id, snap.data());
     if (!post) return null;
+    if (isSuppressedPost(post)) return null;
     if (post.kind && post.kind !== kind) return null;
     return post;
   } catch {

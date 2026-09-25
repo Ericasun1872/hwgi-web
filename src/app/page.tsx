@@ -3,12 +3,15 @@ import Link from "next/link";
 import { ContestHomePopup } from "@/components/ContestHomePopup";
 import { CtaLink } from "@/components/CtaLink";
 import { HeroSalonBackdrop } from "@/components/HeroSalonBackdrop";
+import { JsonLd } from "@/components/JsonLd";
+import { SponsorsHomeSection } from "@/components/SponsorsHomeSection";
 import { getContestEvent } from "@/lib/firestore";
 import {
   extractFirstUrl,
   isBareUrl,
   normalizeExternalUrl,
 } from "@/lib/linkify";
+import { organizationJsonLd } from "@/lib/seo";
 import {
   CONTEST_FALLBACK,
   SITE_NAME_EN,
@@ -55,6 +58,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={organizationJsonLd()} />
       <ContestHomePopup contest={contest} />
 
       <section className="hero" aria-label="소개">
@@ -128,6 +132,8 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      <SponsorsHomeSection />
     </>
   );
 }
