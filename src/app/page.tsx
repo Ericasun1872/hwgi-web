@@ -84,9 +84,6 @@ export default async function HomePage() {
             <CtaLink href="/join" variant="primary">
               가입하기
             </CtaLink>
-            <CtaLink href="/contest" variant="ghost">
-              공모전
-            </CtaLink>
             <CtaLink href="/events" variant="ghost">
               행사 안내
             </CtaLink>
