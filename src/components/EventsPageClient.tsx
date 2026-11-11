@@ -4,9 +4,50 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminEventsPanel } from "@/components/AdminEventsPanel";
 import { EventCard } from "@/components/EventCard";
+import { EventMemories } from "@/components/EventMemories";
 import { useAuth } from "@/components/AuthProvider";
 import { listChapterEventsClient } from "@/lib/admin-content";
+import { isPastEvent } from "@/lib/event-status";
 import type { ChapterEvent } from "@/lib/types";
+
+function EventGroups({ events }: { events: ChapterEvent[] }) {
+  const upcoming = events.filter((event) => !isPastEvent(event.dateLabel));
+  const past = events.filter((event) => isPastEvent(event.dateLabel));
+
+  return (
+    <>
+      <section aria-labelledby="upcoming-events">
+        <h2 id="upcoming-events" className="section-heading">
+          예정 행사
+          <small>Upcoming</small>
+        </h2>
+        {upcoming.length === 0 ? (
+          <p className="empty-state">예정된 행사가 없습니다.</p>
+        ) : (
+          <div className="event-list">
+            {upcoming.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {past.length > 0 ? (
+        <section aria-labelledby="past-events">
+          <h2 id="past-events" className="section-heading">
+            지난 행사
+            <small>Past events</small>
+          </h2>
+          <div className="event-list">
+            {past.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </>
+  );
+}
 
 type Props = {
   initialEvents: ChapterEvent[];
@@ -65,15 +106,8 @@ export function EventsPageClient({ initialEvents }: Props) {
         </section>
       ) : null}
 
-      {events.length === 0 ? (
-        <p className="empty-state">등록된 행사가 없습니다.</p>
-      ) : (
-        <div className="event-list">
-          {events.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
-        </div>
-      )}
+      <EventGroups events={events} />
+      <EventMemories />
     </>
   );
 }

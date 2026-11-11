@@ -286,6 +286,22 @@ function EventFields({
         />
       </label>
       <label>
+        시간
+        <input
+          value={draft.timeLabel}
+          onChange={(e) => patch({ timeLabel: e.target.value })}
+          placeholder="추후 공지"
+        />
+      </label>
+      <label>
+        장소 상세 · 줌 링크
+        <input
+          value={draft.meetingUrl}
+          onChange={(e) => patch({ meetingUrl: e.target.value })}
+          placeholder="추후 공지 또는 https://…"
+        />
+      </label>
+      <label>
         안내 본문 (한글)
         <textarea
           rows={6}

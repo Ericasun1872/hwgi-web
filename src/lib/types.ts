@@ -59,6 +59,10 @@ export type ChapterEvent = {
   dateLabel: string;
   locationKo: string;
   locationEn: string;
+  /** 모임 시각. 비어 있으면 화면에 "추후 공지" */
+  timeLabel?: string;
+  /** 장소 상세 또는 줌 링크. 비어 있으면 "추후 공지" */
+  meetingUrl?: string | null;
   bodyKo: string;
   bodyEn: string;
   /** 공모전 상세 요강 등 외부 안내 페이지 */

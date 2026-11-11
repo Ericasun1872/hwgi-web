@@ -15,7 +15,11 @@ import {
   linkifyNodes,
   normalizeExternalUrl,
 } from "@/lib/linkify";
-import { CONTEST_FALLBACK } from "@/lib/site";
+import {
+  CONTEST_ANNOUNCEMENT,
+  CONTEST_FALLBACK,
+  contestPrizesForDisplay,
+} from "@/lib/site";
 import type { ContestUpdate } from "@/lib/types";
 
 type AwardCategory = "grand" | "main" | "excellence" | "selected";
@@ -182,8 +186,8 @@ export function ContestPageClient({
         <p className="event-card__body">
           {`한국작가회의 미주지회 첫 문학 공모전이 9월 30일에 마감되었습니다.
 소중한 작품을 보내주신 모든 분께 진심으로 감사드립니다.
-수상작 발표는 11월에 이 페이지에서 안내해 드리겠습니다.
-발표: 2026년 11월
+수상작 발표는 ${CONTEST_ANNOUNCEMENT.ko}에 이 페이지에서 안내해 드리겠습니다.
+발표: ${CONTEST_ANNOUNCEMENT.ko}
 상금은 세 표로 나뉩니다.
 
 문학 공모전: 대상 $1,500, 본상 $1,000, 우수상 $500, 입선 $250
@@ -193,9 +197,11 @@ export function ContestPageClient({
         <p className="event-card__body-en">
           {`Our first Literary Contest closed on September 30.
 Thank you to everyone who shared their precious work with us.
-Winners will be announced on this page in November.
-Announcement: November 2026
-Prizes: Grand Prize (1) $1,500 · Main Prize (1) $1,000 · Excellence (2) $500 · Selected (3) $250`}
+Winners will be announced on this page on ${CONTEST_ANNOUNCEMENT.en}.
+Announcement: ${CONTEST_ANNOUNCEMENT.en}
+Prizes: Grand Prize (1) $1,500 · Main Prize (1) $1,000 · Excellence (2) $500 · Selected (3) $250
+English sijo, college and general: Grand Prize $200, Excellence Award $100
+English sijo, K-12: 1st $300, 2nd $200, 3rd $100`}
         </p>
 
         <section className="contest-updates" aria-labelledby="contest-winners">
@@ -206,17 +212,21 @@ Prizes: Grand Prize (1) $1,500 · Main Prize (1) $1,000 · Excellence (2) $500 �
                 {`수상작 심사 중입니다.
 제1회 미주지회 문학 공모전(2026.7.25–9.30)에 소중한 작품을
 보내주신 모든 분께 감사드립니다.
-현재 심사가 진행 중이며, 수상작은 2026년 11월에 이 페이지에서 발표합니다.`}
+현재 심사가 진행 중이며, 수상작은 ${CONTEST_ANNOUNCEMENT.ko}에 이 페이지에서 발표합니다.`}
               </p>
               <p className="event-card__body-en">
                 {`Judging in Progress
 Thank you to everyone who shared their work in our 1st Literary Contest
 (Jul 25 – Sep 30, 2026).
 Judging is now underway, and winners will be announced on this page
-in November 2026.`}
+on ${CONTEST_ANNOUNCEMENT.en}.`}
               </p>
-              <p className="event-card__body">수상자는 2026년 11월에 발표됩니다.</p>
-              <p className="event-card__body-en">Winners will be announced in November 2026.</p>
+              <p className="event-card__body">
+                수상자는 {CONTEST_ANNOUNCEMENT.ko}에 발표됩니다.
+              </p>
+              <p className="event-card__body-en">
+                Winners will be announced on {CONTEST_ANNOUNCEMENT.en}.
+              </p>
             </>
           ) : (
             <div>
@@ -247,7 +257,7 @@ in November 2026.`}
         ) : null}
 
         <ul className="prize-list" aria-label="시상 안내">
-          {contest.prizes.map((p) => (
+          {contestPrizesForDisplay(contest.prizes).map((p) => (
             <li key={`${p.place}-${p.amount}`}>
               <strong>{p.place}</strong>
               <span>{p.amount}</span>

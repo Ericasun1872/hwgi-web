@@ -17,6 +17,18 @@ export const metadata: Metadata = buildMetadata({
 
 export const revalidate = 30;
 
+function withoutStaffContact(event: ChapterEvent): ChapterEvent {
+  return {
+    ...event,
+    bodyKo: event.bodyKo
+      .replace(/참가 신청은 운영진에게 연락해 주세요\.?\s*/g, "")
+      .trim(),
+    bodyEn: event.bodyEn
+      .replace(/Contact the chapter to register\.?\s*/g, "")
+      .trim(),
+  };
+}
+
 const FALLBACK_EVENTS: ChapterEvent[] = [
   {
     id: "event_seed_monthly",
@@ -37,19 +49,18 @@ const FALLBACK_EVENTS: ChapterEvent[] = [
     dateLabel: "2026년 6월 (일정 확정 중)",
     locationKo: "온라인 + 현장 병행 예정",
     locationEn: "Hybrid (online + in person, TBA)",
-    bodyKo:
-      "사진과 시 한 편을 함께 만드는 실습. 참가 신청은 운영진에게 연락해 주세요.",
-    bodyEn:
-      "Hands-on session pairing photos with short poems. Contact the chapter to register.",
+    bodyKo: "사진과 시 한 편을 함께 만드는 실습.",
+    bodyEn: "Hands-on session pairing photos with short poems.",
   },
 ];
 
 export default async function EventsPage() {
   const remote = await getChapterEvents();
-  const events =
+  const events = (
     remote.length > 0
       ? remote.filter((e) => e.id !== "event_contest_2026")
-      : FALLBACK_EVENTS;
+      : FALLBACK_EVENTS
+  ).map(withoutStaffContact);
 
   return (
     <div className="page">

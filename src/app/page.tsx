@@ -4,6 +4,7 @@ import { ContestHomePopup } from "@/components/ContestHomePopup";
 import { CtaLink } from "@/components/CtaLink";
 import { HeroSalonBackdrop } from "@/components/HeroSalonBackdrop";
 import { JsonLd } from "@/components/JsonLd";
+import { NoticesSection } from "@/components/NoticesSection";
 import { SponsorsHomeSection } from "@/components/SponsorsHomeSection";
 import { getContestEvent } from "@/lib/firestore";
 import {
@@ -91,6 +92,10 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="home-notices-wrap">
+        <NoticesSection />
+      </section>
+
       <section className="home-salon" aria-label="바로가기">
         <header className="home-salon__header">
           <p>따뜻한 불빛 아래, 글이 모이는 자리</p>
@@ -105,7 +110,7 @@ export default async function HomePage() {
               문학 공모전
               <small>Literary Contest</small>
             </h2>
-            <p>상금·일정·참여 안내를 확인하세요.</p>
+            <p>상금과 발표 일정을 확인하세요.</p>
           </Link>
           <Link className="spotlight-link" href="/events">
             <span className="spotlight-link__mark" aria-hidden>

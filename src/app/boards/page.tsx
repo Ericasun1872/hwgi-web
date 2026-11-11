@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { WriteCta } from "@/components/WriteCta";
+import { getAllBoardPosts } from "@/lib/firestore";
 import { BOARD_KINDS, buildMetadata } from "@/lib/site";
+import type { BoardPost } from "@/lib/types";
 
 export const metadata: Metadata = buildMetadata({
   title: "게시판",
@@ -10,7 +12,21 @@ export const metadata: Metadata = buildMetadata({
   path: "/boards",
 });
 
-export default function BoardsPage() {
+export default async function BoardsPage() {
+  let posts: BoardPost[] = [];
+  try {
+    posts = await getAllBoardPosts();
+  } catch {
+    posts = [];
+  }
+
+  const previews = BOARD_KINDS.map((board) => ({
+    ...board,
+    posts: posts
+      .filter((post) => post.kind === board.kind || post.boardType === board.kind)
+      .slice(0, 3),
+  }));
+
   return (
     <div className="page">
       <header className="page-header">
@@ -18,6 +34,14 @@ export default function BoardsPage() {
         <p>
           회원 작품을 읽어 보세요
           <span className="en">Browse member writing by genre</span>
+        </p>
+        <p className="phase-note">
+          작품 작성과 댓글은 승인된 회원만 할 수 있습니다. 웹에서 가입한 뒤 운영진
+          승인을 받으면 글을 쓸 수 있습니다.
+          <span className="en">
+            Only approved members may post or comment. Join on the web, then
+            wait for chapter approval.
+          </span>
         </p>
       </header>
 
@@ -55,6 +79,31 @@ export default function BoardsPage() {
           </Link>
         ))}
       </div>
+
+      <section className="board-previews" aria-label="장르별 최신 작품">
+        {previews.map((board) => (
+          <article key={board.kind}>
+            <h2>
+              <Link href={`/boards/${board.kind}`}>{board.labelKo}</Link>
+              <small>{board.labelEn}</small>
+            </h2>
+            {board.posts.length === 0 ? (
+              <p className="empty-state">아직 올라온 작품이 없습니다.</p>
+            ) : (
+              <ul>
+                {board.posts.map((post) => (
+                  <li key={post.id}>
+                    <Link href={`/boards/${board.kind}/${post.id}`}>
+                      {post.title || "제목 없음"}
+                    </Link>
+                    <span>{post.authorName}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ))}
+      </section>
 
       <WriteCta />
 

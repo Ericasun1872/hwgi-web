@@ -246,6 +246,8 @@ export async function getChapterEvents(): Promise<ChapterEvent[]> {
         dateLabel: String(data.dateLabel ?? ""),
         locationKo: String(data.locationKo ?? ""),
         locationEn: String(data.locationEn ?? ""),
+        timeLabel: String(data.timeLabel ?? "").trim(),
+        meetingUrl: String(data.meetingUrl ?? data.zoomUrl ?? "").trim() || null,
         bodyKo: String(data.bodyKo ?? ""),
         bodyEn: String(data.bodyEn ?? ""),
       });
@@ -286,6 +288,8 @@ export async function getContestEvent(): Promise<ChapterEvent | null> {
       dateLabel: String(data.dateLabel ?? ""),
       locationKo: String(data.locationKo ?? ""),
       locationEn: String(data.locationEn ?? ""),
+      timeLabel: String(data.timeLabel ?? "").trim(),
+      meetingUrl: String(data.meetingUrl ?? data.zoomUrl ?? "").trim() || null,
       bodyKo: String(data.bodyKo ?? ""),
       bodyEn: String(data.bodyEn ?? ""),
       detailUrl: String(data.detailUrl ?? "").trim() || null,

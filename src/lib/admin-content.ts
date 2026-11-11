@@ -23,6 +23,8 @@ export type EventInput = {
   dateLabel: string;
   locationKo: string;
   locationEn: string;
+  timeLabel: string;
+  meetingUrl: string;
   bodyKo: string;
   bodyEn: string;
 };
@@ -53,6 +55,8 @@ function mapEvent(id: string, data: Record<string, unknown>): ChapterEvent {
     dateLabel: String(data.dateLabel ?? ""),
     locationKo: String(data.locationKo ?? ""),
     locationEn: String(data.locationEn ?? ""),
+    timeLabel: String(data.timeLabel ?? "").trim(),
+    meetingUrl: String(data.meetingUrl ?? data.zoomUrl ?? "").trim() || null,
     bodyKo: String(data.bodyKo ?? ""),
     bodyEn: String(data.bodyEn ?? ""),
     detailUrl: String(data.detailUrl ?? "").trim() || null,
@@ -92,6 +96,8 @@ export async function saveChapterEvent(
       dateLabel: input.dateLabel.trim(),
       locationKo: input.locationKo.trim(),
       locationEn: input.locationEn.trim(),
+      timeLabel: input.timeLabel.trim(),
+      meetingUrl: input.meetingUrl.trim() || null,
       bodyKo: input.bodyKo.trim(),
       bodyEn: input.bodyEn.trim(),
       updatedAt: serverTimestamp(),
@@ -172,6 +178,8 @@ export function emptyEventInput(): EventInput {
     dateLabel: "",
     locationKo: "",
     locationEn: "",
+    timeLabel: "",
+    meetingUrl: "",
     bodyKo: "",
     bodyEn: "",
   };
@@ -184,6 +192,8 @@ export function eventToInput(event: ChapterEvent): EventInput {
     dateLabel: event.dateLabel,
     locationKo: event.locationKo,
     locationEn: event.locationEn,
+    timeLabel: event.timeLabel ?? "",
+    meetingUrl: event.meetingUrl ?? "",
     bodyKo: event.bodyKo,
     bodyEn: event.bodyEn,
   };
@@ -198,6 +208,8 @@ export function contestToInput(event: ChapterEvent | null): ContestInput {
         dateLabel: CONTEST_FALLBACK.dateLabel,
         locationKo: CONTEST_FALLBACK.locationKo,
         locationEn: CONTEST_FALLBACK.locationEn,
+        timeLabel: "",
+        meetingUrl: "",
         bodyKo: CONTEST_FALLBACK.bodyKo,
         bodyEn: CONTEST_FALLBACK.bodyEn,
       };

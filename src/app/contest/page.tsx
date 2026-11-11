@@ -15,7 +15,7 @@ import { buildMetadata, CONTEST_FALLBACK } from "@/lib/site";
 export const metadata: Metadata = buildMetadata({
   title: "문학 공모전",
   description:
-    "2026 미주지회 문학 공모전 — 상금·일정·참여 안내. Literary contest for the USA Chapter.",
+    "2026 미주지회 문학 공모전 — 상금과 일정. Literary contest for the USA Chapter.",
   path: "/contest",
 });
 
@@ -62,7 +62,7 @@ export default async function ContestPage() {
         <h1>문학 공모전</h1>
         <p>
           Literary Contest
-          <span className="en">상금 · 일정 · 참여 유도</span>
+          <span className="en">상금 · 일정</span>
         </p>
         <ContestAdminLink />
         <PolicyLinks />
@@ -73,8 +73,8 @@ export default async function ContestPage() {
       <AppWriteCta />
 
       <div className="hero__ctas" style={{ marginTop: "1.5rem" }}>
-        <CtaLink href="/join" variant="primary">
-          가입하고 작품 제출하기
+        <CtaLink href="/contact" variant="primary">
+          다음 공모전 알림 받기
         </CtaLink>
         <CtaLink href="/boards" variant="gold">
           회원 작품 읽기

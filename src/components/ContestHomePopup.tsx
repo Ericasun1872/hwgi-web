@@ -8,6 +8,7 @@ import {
   isBareUrl,
   normalizeExternalUrl,
 } from "@/lib/linkify";
+import { contestPrizesForDisplay } from "@/lib/site";
 
 export type ContestPopupData = {
   titleKo: string;
@@ -122,9 +123,9 @@ export function ContestHomePopup({ contest }: Props) {
           <p className="contest-home-popup__date">{contest.dateLabel}</p>
         ) : null}
         <p className="contest-home-popup__body">{contest.bodyKo}</p>
-        {contest.prizes.length > 0 ? (
+        {contestPrizesForDisplay(contest.prizes).length > 0 ? (
           <ul className="contest-home-popup__prizes" aria-label="시상 안내">
-            {contest.prizes.slice(0, 4).map((p) => (
+            {contestPrizesForDisplay(contest.prizes).slice(0, 4).map((p) => (
               <li key={`${p.place}-${p.amount}`}>
                 <strong>{p.place}</strong>
                 <span>{p.amount}</span>

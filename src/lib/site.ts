@@ -1,4 +1,4 @@
-import type { BoardKind } from "./types";
+import type { BoardKind, ContestPrize } from "./types";
 import type { Metadata } from "next";
 
 export const SITE_NAME_KO = "한국작가회의 미주지회";
@@ -29,6 +29,59 @@ export const CONTACT = {
   email:
     process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "wakusachapter@gmail.com",
 } as const;
+
+/** 값이 비어 있으면 푸터에 아이콘을 그리지 않습니다. 카카오톡은 쓰지 않습니다. */
+export const SOCIAL_LINKS: { id: string; label: string; href: string }[] = [
+  { id: "instagram", label: "Instagram", href: "" },
+  { id: "facebook", label: "Facebook", href: "" },
+  { id: "youtube", label: "YouTube", href: "" },
+];
+
+/** 비어 있으면 사이트 안의 문의 폼(/contact)으로 연결합니다. */
+export const INQUIRY_FORM_URL = "";
+
+/** 비어 있으면 행사 신청 버튼이 문의 메일로 열립니다. */
+export const EVENT_SIGNUP_URL = "";
+
+/** 수상작 발표일. 날짜만 바꾸면 공모전·공지 문구가 함께 바뀝니다. */
+export const CONTEST_ANNOUNCEMENT = {
+  ko: "2026년 11월 20일",
+  en: "November 20, 2026",
+};
+
+export const OFFICIAL_CONTEST_PRIZES: ContestPrize[] = [
+  { place: "대상", amount: "$1,500 (1명)" },
+  { place: "본상", amount: "$1,000 (1명)" },
+  { place: "우수상", amount: "$500 (2명)" },
+  { place: "입선", amount: "$250 (3명)" },
+  { place: "영어 시조 대상 · 대학생·일반", amount: "$200" },
+  { place: "영어 시조 우수상 · 대학생·일반", amount: "$100" },
+  { place: "영어 시조 1등 · K-12", amount: "$300" },
+  { place: "영어 시조 2등 · K-12", amount: "$200" },
+  { place: "영어 시조 3등 · K-12", amount: "$100" },
+];
+
+export function contestPrizesForDisplay(prizes: ContestPrize[] | undefined) {
+  const list = prizes ?? [];
+  const needsOfficial = list.some((prize) =>
+    /상금 안내|공지 확인|장르별 시상/.test(`${prize.place} ${prize.amount}`),
+  );
+  const source = list.length === 0 || needsOfficial ? OFFICIAL_CONTEST_PRIZES : list;
+  return source.filter(
+    (prize) => !/상금 안내\s*\(공지 확인\)/.test(`${prize.place} ${prize.amount}`),
+  );
+}
+
+export const NOTICES = [
+  {
+    id: "contest-results-date",
+    titleKo: "제1회 문학 공모전 수상작 발표",
+    titleEn: "First literary contest results",
+    bodyKo: `수상작은 ${CONTEST_ANNOUNCEMENT.ko} 공모전 페이지에서 발표합니다.`,
+    bodyEn: `Winners will be announced on the contest page on ${CONTEST_ANNOUNCEMENT.en}.`,
+    href: "/contest",
+  },
+] as const;
 
 export const BOARD_KINDS: {
   kind: BoardKind;
@@ -99,16 +152,13 @@ export const CONTEST_FALLBACK = {
     "시·디카시·수필·시조 등 장르별 작품을 모집합니다. 상금과 시상 일정은 지회 공지를 따르며, 작품 제출은 회원 앱에서 진행합니다.",
   bodyEn:
     "We invite poetry, dica-poetry, essays, sijo, and more. Prizes and timeline follow chapter announcements; submit works through the member app.",
-  prizes: [
-    { place: "대상", amount: "상금 안내 (공지 확인)" },
-    { place: "우수상", amount: "장르별 시상" },
-    { place: "입선", amount: "작품집·시상식 초대" },
-  ],
+  prizes: OFFICIAL_CONTEST_PRIZES,
 };
 
 export const NAV_LINKS = [
   { href: "/about", labelKo: "소개", labelEn: "About" },
   { href: "/events", labelKo: "행사", labelEn: "Events" },
+  { href: "/notices", labelKo: "공지", labelEn: "Notices" },
   { href: "/contest", labelKo: "공모전", labelEn: "Contest" },
   { href: "/boards", labelKo: "게시판", labelEn: "Boards" },
   { href: "/ebooks", labelKo: "작품집", labelEn: "E-books" },
