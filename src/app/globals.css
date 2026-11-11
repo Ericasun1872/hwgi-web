@@ -903,6 +903,15 @@ img {
   line-height: 1.7;
 }
 
+.join-sponsors p + p {
+  margin-top: 0.75rem;
+}
+
+.join-sponsors .en {
+  display: block;
+  margin-top: 0.35rem;
+}
+
 .site-footer__note a {
   color: var(--gold-soft);
   border-bottom: 1px solid rgba(230, 195, 92, 0.45);

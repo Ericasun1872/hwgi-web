@@ -7,7 +7,7 @@ import { APP_STORE_URL, buildMetadata, PLAY_STORE_URL } from "@/lib/site";
 export const metadata: Metadata = buildMetadata({
   title: "가입 안내",
   description:
-    "한국작가회의 미주지회 가입·웹·앱 이용 안내. Join the USA Chapter.",
+    "한국작가회의 미주지회 가입 안내. 미주지회 회원 연회비는 150달러입니다. Join the USA Chapter. Chapter dues are $150 a year.",
   path: "/join",
 });
 
@@ -62,6 +62,22 @@ export default function JoinPage() {
           </p>
         </li>
       </ol>
+
+      <section className="join-sponsors" aria-label="연회비">
+        <h2>연회비 150달러</h2>
+        <p>
+          미주지회 회원 연회비는 1년 150달러입니다. 가입 신청 후 운영진이
+          납부 안내를 이메일로 보내며, 납부 담당은 Erica Chang입니다.
+          <span className="en">
+            Chapter membership dues are $150 a year. After you apply, the
+            chapter emails payment instructions. The treasurer is Erica Chang.
+          </span>
+        </p>
+        <p>
+          일반 회원은 회비가 없습니다.
+          <span className="en">General membership has no dues.</span>
+        </p>
+      </section>
 
       <div className="download-row">
         <CtaLink href="/signup" variant="primary">

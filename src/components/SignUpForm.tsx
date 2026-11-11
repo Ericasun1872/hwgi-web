@@ -149,7 +149,7 @@ ${nick ? `· 닉네임: ${nick}\n` : ""}${en ? `· 영문명: ${en}\n` : ""}· �
           />
           <span>
             <strong>미주지회 회원</strong>
-            <small>연회비 · 승인 후 글쓰기</small>
+            <small>연회비 $150 · 승인 후 글쓰기</small>
           </span>
         </label>
         <label className="signup-type__option">

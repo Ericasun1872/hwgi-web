@@ -38,8 +38,8 @@ These terms set forth the rights, obligations, and responsibilities between the 
 
 제4조 (연회비 및 후원) / Article 4 (Membership Dues & Donations)
 
-1. 정회원 연회비는 연 USD $100입니다.
-   Annual membership dues for regular members are USD $100 per year.
+1. 정회원 연회비는 연 USD $150입니다.
+   Annual membership dues for regular members are USD $150 per year.
 
 2. 지회는 문학 활동 지원을 위한 자발적 후원금을 받을 수 있습니다.
    The Chapter may accept voluntary donations to support literary activities.
