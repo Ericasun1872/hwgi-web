@@ -12,6 +12,8 @@ export const metadata: Metadata = buildMetadata({
   path: "/boards",
 });
 
+export const revalidate = 30;
+
 export default async function BoardsPage() {
   let posts: BoardPost[] = [];
   try {
