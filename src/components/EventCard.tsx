@@ -1,5 +1,6 @@
+import { EventSignupDialog } from "@/components/EventSignupDialog";
 import { isPastEvent } from "@/lib/event-status";
-import { CONTACT, EVENT_SIGNUP_URL } from "@/lib/site";
+import { EVENT_SIGNUP_URL } from "@/lib/site";
 import type { ChapterEvent } from "@/lib/types";
 
 function publicCopy(text: string) {
@@ -7,13 +8,6 @@ function publicCopy(text: string) {
     .replace(/참가 신청은 운영진에게 연락해 주세요\.?\s*/g, "")
     .replace(/Contact the chapter to register\.?\s*/g, "")
     .trim();
-}
-
-function signupHref() {
-  const configured = EVENT_SIGNUP_URL.trim();
-  if (configured) return configured;
-  const subject = encodeURIComponent("행사 신청 / Event registration");
-  return `mailto:${CONTACT.email}?subject=${subject}`;
 }
 
 function meetingIsLink(value: string) {
@@ -26,8 +20,7 @@ export function EventCard({ event }: { event: ChapterEvent }) {
   const meeting = event.meetingUrl?.trim() ?? "";
   const bodyKo = publicCopy(event.bodyKo);
   const bodyEn = publicCopy(event.bodyEn);
-  const href = signupHref();
-  const external = /^https?:\/\//i.test(href);
+  const signupUrl = EVENT_SIGNUP_URL.trim();
 
   return (
     <article className="event-card">
@@ -61,14 +54,21 @@ export function EventCard({ event }: { event: ChapterEvent }) {
       </p>
       {bodyKo ? <p className="event-card__body">{bodyKo}</p> : null}
       {bodyEn ? <p className="event-card__body-en">{bodyEn}</p> : null}
-      {past ? null : (
+      {past ? null : signupUrl ? (
         <a
           className="cta cta--primary event-card__apply"
-          href={href}
-          {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          href={signupUrl}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           신청하기
         </a>
+      ) : (
+        <EventSignupDialog
+          eventTitleKo={event.titleKo}
+          eventTitleEn={event.titleEn}
+          eventDate={event.dateLabel}
+        />
       )}
     </article>
   );
