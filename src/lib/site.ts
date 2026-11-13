@@ -152,7 +152,6 @@ export const CONTEST_FALLBACK = {
 export const NAV_LINKS = [
   { href: "/about", labelKo: "소개", labelEn: "About" },
   { href: "/events", labelKo: "행사", labelEn: "Events" },
-  { href: "/notices", labelKo: "공지", labelEn: "Notices" },
   { href: "/contest", labelKo: "공모전", labelEn: "Contest" },
   { href: "/boards", labelKo: "게시판", labelEn: "Boards" },
   { href: "/ebooks", labelKo: "작품집", labelEn: "E-books" },

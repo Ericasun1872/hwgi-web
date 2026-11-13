@@ -33,7 +33,6 @@ export function SiteFooter() {
         </div>
         <div className="site-footer__links">
           <Link href="/join">가입 안내</Link>
-          <Link href="/notices">공지</Link>
           {INQUIRY_FORM_URL.trim().startsWith("http") ? (
             <a href={INQUIRY_FORM_URL.trim()} target="_blank" rel="noopener noreferrer">
               문의 폼
