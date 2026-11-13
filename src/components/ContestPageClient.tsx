@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { AdminContestPanel } from "@/components/AdminContestPanel";
 import { useAuth } from "@/components/AuthProvider";
 import { ContestUpdateCard } from "@/components/ContestUpdateCard";
+import { ContestWinners } from "@/components/ContestWinners";
 import {
   getContestEventClient,
   listContestUpdatesClient,
@@ -12,36 +13,10 @@ import {
 import {
   extractFirstUrl,
   isBareUrl,
-  linkifyNodes,
   normalizeExternalUrl,
 } from "@/lib/linkify";
-import {
-  CONTEST_ANNOUNCEMENT,
-  CONTEST_FALLBACK,
-  contestPrizesForDisplay,
-} from "@/lib/site";
+import { CONTEST_FALLBACK } from "@/lib/site";
 import type { ContestUpdate } from "@/lib/types";
-
-type AwardCategory = "grand" | "main" | "excellence" | "selected";
-
-type Winner = {
-  category: AwardCategory;
-  name: string;
-  title: string;
-};
-
-/**
- * 11월 수상작 발표 때 이 목록만 채우면 화면에 나타납니다.
- * { category: "grand" | "main" | "excellence" | "selected", name: "이름", title: "작품 제목" }
- */
-const WINNERS: Winner[] = [];
-
-const AWARD_CATEGORIES: { id: AwardCategory; label: string }[] = [
-  { id: "grand", label: "대상 Grand Prize $1,500 (1명)" },
-  { id: "main", label: "본상 Main Prize $1,000 (1명)" },
-  { id: "excellence", label: "우수상 Excellence Award $500 (2명)" },
-  { id: "selected", label: "입선 Selected $250 (3명)" },
-];
 
 export type ContestView = {
   titleKo: string;
@@ -183,87 +158,7 @@ export function ContestPageClient({
             <span className="contest-detail-link__en">Contest guidelines</span>
           </p>
         ) : null}
-        <p className="event-card__body">
-          {`한국작가회의 미주지회 첫 문학 공모전이 9월 30일에 마감되었습니다.
-소중한 작품을 보내주신 모든 분께 진심으로 감사드립니다.
-수상작 발표는 ${CONTEST_ANNOUNCEMENT.ko}에 이 페이지에서 안내해 드리겠습니다.
-발표: ${CONTEST_ANNOUNCEMENT.ko}
-상금은 세 표로 나뉩니다.
-
-문학 공모전: 대상 $1,500, 본상 $1,000, 우수상 $500, 입선 $250
-영어 시조(대학생·일반): 대상 $200, 우수상 $100
-영어 시조(유치원~12학년): 1등 $300, 2등 $200, 3등 $100`}
-        </p>
-        <p className="event-card__body-en">
-          {`Our first Literary Contest closed on September 30.
-Thank you to everyone who shared their precious work with us.
-Winners will be announced on this page on ${CONTEST_ANNOUNCEMENT.en}.
-Announcement: ${CONTEST_ANNOUNCEMENT.en}
-Prizes: Grand Prize (1) $1,500 · Main Prize (1) $1,000 · Excellence (2) $500 · Selected (3) $250
-English sijo, college and general: Grand Prize $200, Excellence Award $100
-English sijo, K-12: 1st $300, 2nd $200, 3rd $100`}
-        </p>
-
-        <section className="contest-updates" aria-labelledby="contest-winners">
-          <h2 id="contest-winners">수상작 발표</h2>
-          {WINNERS.length === 0 ? (
-            <>
-              <p className="event-card__body">
-                {`수상작 심사 중입니다.
-제1회 미주지회 문학 공모전(2026.7.25–9.30)에 소중한 작품을
-보내주신 모든 분께 감사드립니다.
-현재 심사가 진행 중이며, 수상작은 ${CONTEST_ANNOUNCEMENT.ko}에 이 페이지에서 발표합니다.`}
-              </p>
-              <p className="event-card__body-en">
-                {`Judging in Progress
-Thank you to everyone who shared their work in our 1st Literary Contest
-(Jul 25 – Sep 30, 2026).
-Judging is now underway, and winners will be announced on this page
-on ${CONTEST_ANNOUNCEMENT.en}.`}
-              </p>
-              <p className="event-card__body">
-                수상자는 {CONTEST_ANNOUNCEMENT.ko}에 발표됩니다.
-              </p>
-              <p className="event-card__body-en">
-                Winners will be announced on {CONTEST_ANNOUNCEMENT.en}.
-              </p>
-            </>
-          ) : (
-            <div>
-              {AWARD_CATEGORIES.map((award) => {
-                const winners = WINNERS.filter((winner) => winner.category === award.id);
-                if (winners.length === 0) return null;
-                return (
-                  <div key={award.id}>
-                    <h3>{award.label}</h3>
-                    <ul>
-                      {winners.map((winner) => (
-                        <li key={`${award.id}-${winner.name}-${winner.title}`}>
-                          {winner.name}
-                          <span> · {winner.title}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        <p className="event-card__body">{linkifyNodes(contest.bodyKo)}</p>
-        {contest.bodyEn ? (
-          <p className="event-card__body-en">{linkifyNodes(contest.bodyEn)}</p>
-        ) : null}
-
-        <ul className="prize-list" aria-label="시상 안내">
-          {contestPrizesForDisplay(contest.prizes).map((p) => (
-            <li key={`${p.place}-${p.amount}`}>
-              <strong>{p.place}</strong>
-              <span>{p.amount}</span>
-            </li>
-          ))}
-        </ul>
+        <ContestWinners />
       </section>
 
       {updates.length > 0 ? (

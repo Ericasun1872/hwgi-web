@@ -43,12 +43,6 @@ export const INQUIRY_FORM_URL = "";
 /** 비어 있으면 행사 신청 버튼이 문의 메일로 열립니다. */
 export const EVENT_SIGNUP_URL = "";
 
-/** 수상작 발표일. 날짜만 바꾸면 공모전·공지 문구가 함께 바뀝니다. */
-export const CONTEST_ANNOUNCEMENT = {
-  ko: "2026년 11월 20일",
-  en: "November 20, 2026",
-};
-
 export const OFFICIAL_CONTEST_PRIZES: ContestPrize[] = [
   { place: "대상", amount: "$1,500 (1명)" },
   { place: "본상", amount: "$1,000 (1명)" },
@@ -75,10 +69,10 @@ export function contestPrizesForDisplay(prizes: ContestPrize[] | undefined) {
 export const NOTICES = [
   {
     id: "contest-results-date",
-    titleKo: "제1회 문학 공모전 수상작 발표",
-    titleEn: "First literary contest results",
-    bodyKo: `수상작은 ${CONTEST_ANNOUNCEMENT.ko} 공모전 페이지에서 발표합니다.`,
-    bodyEn: `Winners will be announced on the contest page on ${CONTEST_ANNOUNCEMENT.en}.`,
+    titleKo: "제1회 문학 공모전 수상자 발표",
+    titleEn: "Winners of the 1st WAKUSA Literary Contest",
+    bodyKo: "제1회 문학공모전 수상자를 공모전 페이지에 발표했습니다.",
+    bodyEn: "The winners of the 1st WAKUSA Literary Contest are posted on the contest page.",
     href: "/contest",
   },
 ] as const;
