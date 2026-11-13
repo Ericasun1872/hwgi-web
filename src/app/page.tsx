@@ -6,61 +6,19 @@ import { HeroSalonBackdrop } from "@/components/HeroSalonBackdrop";
 import { JsonLd } from "@/components/JsonLd";
 import { NoticesSection } from "@/components/NoticesSection";
 import { SponsorsHomeSection } from "@/components/SponsorsHomeSection";
-import { getContestEvent } from "@/lib/firestore";
-import {
-  extractFirstUrl,
-  isBareUrl,
-  normalizeExternalUrl,
-} from "@/lib/linkify";
 import { organizationJsonLd } from "@/lib/seo";
 import {
-  CONTEST_FALLBACK,
   SITE_NAME_EN,
   SITE_NAME_KO,
   SITE_TAGLINE_EN,
   SITE_TAGLINE_KO,
 } from "@/lib/site";
 
-export const revalidate = 60;
-
-function resolveDetailUrl(input: {
-  detailUrl?: string | null;
-  locationKo?: string;
-  bodyKo?: string;
-}): string | null {
-  const explicit = input.detailUrl?.trim();
-  if (explicit) return normalizeExternalUrl(explicit);
-  if (isBareUrl(input.locationKo)) {
-    return normalizeExternalUrl(input.locationKo!.trim());
-  }
-  return extractFirstUrl(input.bodyKo);
-}
-
-export default async function HomePage() {
-  const remote = await getContestEvent();
-  const contest = remote
-    ? {
-        titleKo: remote.titleKo || CONTEST_FALLBACK.titleKo,
-        titleEn: remote.titleEn || CONTEST_FALLBACK.titleEn,
-        dateLabel: remote.dateLabel || CONTEST_FALLBACK.dateLabel,
-        bodyKo: remote.bodyKo || CONTEST_FALLBACK.bodyKo,
-        bodyEn: remote.bodyEn || CONTEST_FALLBACK.bodyEn,
-        locationKo: remote.locationKo || CONTEST_FALLBACK.locationKo,
-        detailUrl: resolveDetailUrl(remote),
-        prizes:
-          remote.prizes && remote.prizes.length > 0
-            ? remote.prizes
-            : CONTEST_FALLBACK.prizes,
-      }
-    : {
-        ...CONTEST_FALLBACK,
-        detailUrl: null as string | null,
-      };
-
+export default function HomePage() {
   return (
     <>
       <JsonLd data={organizationJsonLd()} />
-      <ContestHomePopup contest={contest} />
+      <ContestHomePopup />
 
       <section className="hero" aria-label="소개">
         <HeroSalonBackdrop />
@@ -110,7 +68,7 @@ export default async function HomePage() {
               문학 공모전
               <small>Literary Contest</small>
             </h2>
-            <p>상금과 발표 일정을 확인하세요.</p>
+            <p>수상자 발표를 확인하세요.</p>
           </Link>
           <Link className="spotlight-link" href="/events">
             <span className="spotlight-link__mark" aria-hidden>

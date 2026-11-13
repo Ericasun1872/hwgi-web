@@ -3,27 +3,10 @@
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
-import {
-  extractFirstUrl,
-  isBareUrl,
-  normalizeExternalUrl,
-} from "@/lib/linkify";
-import { contestPrizesForDisplay } from "@/lib/site";
 
-export type ContestPopupData = {
-  titleKo: string;
-  titleEn: string;
-  dateLabel: string;
-  bodyKo: string;
-  bodyEn?: string;
-  detailUrl?: string | null;
-  locationKo?: string;
-  prizes: { place: string; amount: string }[];
-};
-
-const STORAGE_KEY = "wakusa_contest_popup_dismissed_2026";
-const POPUP_START = "2026-07-25";
-const POPUP_END = "2026-09-30";
+const STORAGE_KEY = "wakusa_contest_results_popup_2026";
+const POPUP_START = "2026-11-01";
+const POPUP_END = "2026-11-30";
 
 export function isContestPopupPeriod(now = new Date()): boolean {
   const today = new Intl.DateTimeFormat("en-CA", {
@@ -35,24 +18,10 @@ export function isContestPopupPeriod(now = new Date()): boolean {
   return today >= POPUP_START && today <= POPUP_END;
 }
 
-function resolveDetailUrl(data: ContestPopupData): string | null {
-  const explicit = data.detailUrl?.trim();
-  if (explicit) return normalizeExternalUrl(explicit);
-  if (isBareUrl(data.locationKo)) {
-    return normalizeExternalUrl(data.locationKo!.trim());
-  }
-  return extractFirstUrl(data.bodyKo);
-}
-
-type Props = {
-  contest: ContestPopupData;
-};
-
-export function ContestHomePopup({ contest }: Props) {
+export function ContestHomePopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const titleId = useId();
-  const detailUrl = resolveDetailUrl(contest);
 
   useEffect(() => {
     setMounted(true);
@@ -67,14 +36,14 @@ export function ContestHomePopup({ contest }: Props) {
 
   useEffect(() => {
     if (!open) return;
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") dismiss();
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") dismiss();
     }
-    const prev = document.body.style.overflow;
+    const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
   }, [open]);
@@ -112,52 +81,28 @@ export function ContestHomePopup({ contest }: Props) {
         >
           ×
         </button>
-        <p className="contest-home-popup__eyebrow">문학 공모전 안내</p>
+        <p className="contest-home-popup__eyebrow">문학 공모전 발표</p>
         <h2 id={titleId} className="contest-home-popup__title">
-          {contest.titleKo}
-          {contest.titleEn ? (
-            <small>{contest.titleEn}</small>
-          ) : null}
+          제1회 문학공모전 수상자 발표
+          <small>Winners of the 1st WAKUSA Literary Contest</small>
         </h2>
-        {contest.dateLabel ? (
-          <p className="contest-home-popup__date">{contest.dateLabel}</p>
-        ) : null}
-        <p className="contest-home-popup__body">{contest.bodyKo}</p>
-        {contestPrizesForDisplay(contest.prizes).length > 0 ? (
-          <ul className="contest-home-popup__prizes" aria-label="시상 안내">
-            {contestPrizesForDisplay(contest.prizes).slice(0, 4).map((p) => (
-              <li key={`${p.place}-${p.amount}`}>
-                <strong>{p.place}</strong>
-                <span>{p.amount}</span>
-              </li>
-            ))}
-          </ul>
-        ) : null}
+        <p className="contest-home-popup__body">
+          한국어 문학과 영어시조 수상자를 발표했습니다. 명단을 확인해 주세요.
+        </p>
+        <p className="contest-home-popup__hint">
+          The Korean literature and English sijo winners are now posted.
+        </p>
         <div className="contest-home-popup__actions">
           <Link href="/contest" className="cta cta--primary" onClick={dismiss}>
-            공모전 자세히 보기
+            공모전 발표 보기
           </Link>
-          {detailUrl ? (
-            <a
-              href={detailUrl}
-              className="cta cta--gold"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              사이트 상세내용
-            </a>
-          ) : null}
         </div>
         <p className="contest-home-popup__hint">
-          접수 기간: 2026. 7. 25 ~ 9. 30
+          2026년 11월 30일까지 안내합니다.
+          <span className="en">Shown through November 30, 2026.</span>
         </p>
       </div>
     </div>,
     document.body,
   );
-}
-
-/** Server/helper: whether popup should be rendered in HTML at all. */
-export function shouldOfferContestPopup(): boolean {
-  return isContestPopupPeriod();
 }

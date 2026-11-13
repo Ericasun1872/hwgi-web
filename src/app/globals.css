@@ -2511,6 +2511,11 @@ img {
   font-size: 0.82rem;
 }
 
+.contest-home-popup__hint .en {
+  display: block;
+  margin-top: 0.2rem;
+}
+
 @media (max-width: 700px) {
   .admin-prize-row {
     grid-template-columns: 1fr;
