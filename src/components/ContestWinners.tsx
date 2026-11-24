@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DEFAULT_WINNER_ANNOUNCEMENT } from "@/lib/contest-winners";
 import type {
   ContestWinnerAnnouncement,
@@ -43,6 +44,14 @@ export function ContestWinners({
   const list = announcement ?? DEFAULT_WINNER_ANNOUNCEMENT;
   return (
     <section className="contest-winners" aria-labelledby="contest-winners">
+      <p className="contest-edit-entry">
+        <Link href="/admin/contest" className="cta cta--gold">
+          운영진 수상자 명단 수정
+        </Link>
+        <span>
+          회장·운영진 계정으로 로그인하면 이름과 작품 제목을 고칠 수 있습니다.
+        </span>
+      </p>
       <h2 id="contest-winners">
         제1회 한국작가회의 미주지회 문학공모전 수상자 발표
         <small>Winners of the 1st WAKUSA Literary Contest</small>

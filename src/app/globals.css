@@ -2249,6 +2249,19 @@ img {
   color: var(--navy);
 }
 
+.contest-edit-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0 0 1.25rem;
+}
+
+.contest-edit-entry span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .contest-winners h2 {
   margin: 1.5rem 0 1rem;
   font-size: 1.55rem;

@@ -77,7 +77,10 @@ export function AdminContestPanel({
     if (embedded) return null;
     return (
       <div className="admin-gate">
-        <p>운영진·회장 계정으로 로그인해 주세요.</p>
+        <p>
+          수상자 명단을 수정하려면 회장·운영진 계정으로 로그인해 주세요. 일반
+          회원 계정에는 이 화면이 열리지 않습니다.
+        </p>
         <Link href="/login?next=/admin/contest" className="cta cta--primary">
           로그인
         </Link>
@@ -89,7 +92,10 @@ export function AdminContestPanel({
     if (embedded) return null;
     return (
       <div className="admin-gate">
-        <p>공모전 관리는 운영진·회장만 이용할 수 있습니다.</p>
+        <p>
+          지금 로그인한 계정은 운영진 계정이 아닙니다. 로그아웃한 뒤 회장·운영진
+          이메일로 다시 로그인해 주세요.
+        </p>
         <Link href="/" className="cta cta--gold">
           홈으로
         </Link>
