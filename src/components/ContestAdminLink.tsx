@@ -8,7 +8,7 @@ export function ContestAdminLink() {
   if (loading || !isAdmin) return null;
   return (
     <p className="admin-inline-link">
-      <a href="#contest-manage">이 페이지에서 바로 수정·포스트</a>
+      <a href="#contest-manage">수상자 명단·안내 바로 수정</a>
       {" · "}
       <Link href="/admin/contest">공모전 관리 전용 화면</Link>
     </p>

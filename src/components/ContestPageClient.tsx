@@ -112,7 +112,7 @@ export function ContestPageClient({
           aria-labelledby="contest-manage-heading"
         >
           <div className="events-manage__header">
-            <h2 id="contest-manage-heading">공모전 바로 수정·포스트</h2>
+            <h2 id="contest-manage-heading">수상자 명단·공모전 바로 수정</h2>
             <button
               type="button"
               className="cta cta--ghost"
