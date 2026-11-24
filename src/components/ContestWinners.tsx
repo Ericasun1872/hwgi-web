@@ -38,8 +38,8 @@ const KOREAN_GROUPS: Group[] = [
       {
         genreKo: "시 부문",
         genreEn: "Poetry",
-        nameKo: "김윤재",
-        nameEn: "Yoonjae Kim",
+        nameKo: "김부연 (Booyeon Kim)",
+        nameEn: "Booyeon Kim",
         titleKo: "눈의 말",
         titleEn: "Nun-ui Mal",
       },
