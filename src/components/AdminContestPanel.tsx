@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { AdminWinnersForm } from "@/components/AdminWinnersForm";
 import { useAuth } from "@/components/AuthProvider";
 import {
   contestToInput,
@@ -10,11 +11,13 @@ import {
   getContestEventClient,
   listContestUpdatesClient,
   saveContestEvent,
+  saveContestWinners,
   type ContestInput,
 } from "@/lib/admin-content";
+import { cloneWinnerAnnouncement } from "@/lib/contest-winners";
 import { fileToOptimizedBase64 } from "@/lib/board-write";
 import { isAdminEmail, memberDisplayName } from "@/lib/member";
-import type { ContestUpdate } from "@/lib/types";
+import type { ContestUpdate, ContestWinnerAnnouncement } from "@/lib/types";
 
 export function AdminContestPanel({
   embedded = false,
@@ -27,6 +30,9 @@ export function AdminContestPanel({
   const isAdmin = isAdminEmail(user?.email ?? member?.email);
 
   const [draft, setDraft] = useState<ContestInput | null>(null);
+  const [winners, setWinners] = useState<ContestWinnerAnnouncement | null>(
+    null,
+  );
   const [updates, setUpdates] = useState<ContestUpdate[]>([]);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -46,6 +52,9 @@ export function AdminContestPanel({
         listContestUpdatesClient(),
       ]);
       setDraft(contestToInput(contest));
+      setWinners(
+        cloneWinnerAnnouncement(contest?.winnerAnnouncement ?? undefined),
+      );
       setUpdates(feed);
     } catch {
       setError("공모전 정보를 불러오지 못했습니다.");
@@ -104,6 +113,23 @@ export function AdminContestPanel({
       onChanged?.();
     } catch (err) {
       setError(err instanceof Error ? err.message : "저장에 실패했습니다.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onSaveWinners(e: FormEvent) {
+    e.preventDefault();
+    if (!winners) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await saveContestWinners(winners);
+      setNotice("수상자 명단을 저장했습니다. 공모전 페이지에 반영됩니다.");
+      await reload();
+      onChanged?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "수상자 명단 저장에 실패했습니다.");
     } finally {
       setBusy(false);
     }
@@ -195,10 +221,25 @@ export function AdminContestPanel({
         </p>
       ) : null}
 
-      {loading || !draft ? (
+      {loading || !draft || !winners ? (
         <p className="empty-state">불러오는 중…</p>
       ) : (
         <>
+          <section className="admin-section" aria-labelledby="contest-winners-edit">
+            <h2 id="contest-winners-edit">수상자 명단</h2>
+            <p className="admin-section__lead">
+              이름, 영문 이름, 부문, 작품 제목을 고친 뒤 저장하면 공모전
+              페이지의 수상자 발표에 반영됩니다. 비워 둔 줄은 저장할 때
+              빠집니다.
+            </p>
+            <AdminWinnersForm
+              value={winners}
+              busy={busy}
+              onChange={setWinners}
+              onSubmit={(event) => void onSaveWinners(event)}
+            />
+          </section>
+
           <section className="admin-section" aria-labelledby="contest-info-heading">
             <h2 id="contest-info-heading">공모전 안내</h2>
             <p className="admin-section__lead">

@@ -16,7 +16,7 @@ import {
   normalizeExternalUrl,
 } from "@/lib/linkify";
 import { CONTEST_FALLBACK } from "@/lib/site";
-import type { ContestUpdate } from "@/lib/types";
+import type { ContestUpdate, ContestWinnerAnnouncement } from "@/lib/types";
 
 export type ContestView = {
   titleKo: string;
@@ -28,6 +28,7 @@ export type ContestView = {
   bodyEn: string;
   detailUrl: string | null;
   prizes: { place: string; amount: string }[];
+  winnerAnnouncement: ContestWinnerAnnouncement | null;
 };
 
 type Props = {
@@ -52,7 +53,7 @@ function toContestView(
   remote: Awaited<ReturnType<typeof getContestEventClient>>,
 ): ContestView {
   if (!remote) {
-    return { ...CONTEST_FALLBACK, detailUrl: null };
+    return { ...CONTEST_FALLBACK, detailUrl: null, winnerAnnouncement: null };
   }
   return {
     titleKo: remote.titleKo || CONTEST_FALLBACK.titleKo,
@@ -67,6 +68,7 @@ function toContestView(
       remote.prizes && remote.prizes.length > 0
         ? remote.prizes
         : CONTEST_FALLBACK.prizes,
+    winnerAnnouncement: remote?.winnerAnnouncement ?? null,
   };
 }
 
@@ -120,8 +122,8 @@ export function ContestPageClient({
             </button>
           </div>
           <p className="admin-section__lead">
-            운영진·회장만 보입니다. 안내·상금 수정과 업데이트 포스트(이미지
-            포함)를 올리면 아래 공모전 페이지에 바로 반영됩니다.
+            운영진·회장만 보입니다. 수상자 이름·작품, 안내·상금, 업데이트
+            포스트를 고치면 아래 공모전 페이지에 바로 반영됩니다.
           </p>
           {manageOpen ? (
             <AdminContestPanel
@@ -158,7 +160,7 @@ export function ContestPageClient({
             <span className="contest-detail-link__en">Contest guidelines</span>
           </p>
         ) : null}
-        <ContestWinners />
+        <ContestWinners announcement={contest.winnerAnnouncement} />
       </section>
 
       {updates.length > 0 ? (

@@ -12,8 +12,17 @@ import {
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
 import { extractFirstUrl, isBareUrl } from "@/lib/linkify";
+import {
+  parseWinnerAnnouncement,
+  sanitizeWinnerAnnouncement,
+} from "@/lib/contest-winners";
 import { CONTEST_FALLBACK } from "@/lib/site";
-import type { ChapterEvent, ContestPrize, ContestUpdate } from "@/lib/types";
+import type {
+  ChapterEvent,
+  ContestPrize,
+  ContestUpdate,
+  ContestWinnerAnnouncement,
+} from "@/lib/types";
 
 export const CONTEST_EVENT_ID = "event_contest_2026";
 
@@ -61,6 +70,7 @@ function mapEvent(id: string, data: Record<string, unknown>): ChapterEvent {
     bodyEn: String(data.bodyEn ?? ""),
     detailUrl: String(data.detailUrl ?? "").trim() || null,
     prizes,
+    winnerAnnouncement: parseWinnerAnnouncement(data.winnerAnnouncement),
   };
 }
 
@@ -137,6 +147,21 @@ export async function saveContestEvent(input: ContestInput): Promise<void> {
       bodyEn: input.bodyEn.trim(),
       detailUrl: detailUrl || null,
       prizes,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+}
+
+export async function saveContestWinners(
+  announcement: ContestWinnerAnnouncement,
+): Promise<void> {
+  const winnerAnnouncement = sanitizeWinnerAnnouncement(announcement);
+  await setDoc(
+    doc(getDb(), "chapter_events", CONTEST_EVENT_ID),
+    {
+      id: CONTEST_EVENT_ID,
+      winnerAnnouncement,
       updatedAt: serverTimestamp(),
     },
     { merge: true },

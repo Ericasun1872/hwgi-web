@@ -9,6 +9,7 @@ import {
   type Timestamp,
 } from "firebase/firestore";
 import { getDb } from "./firebase";
+import { parseWinnerAnnouncement } from "./contest-winners";
 import { isSuppressedPost } from "./content-suppression";
 import { BOARD_KINDS } from "./site";
 import type {
@@ -294,6 +295,7 @@ export async function getContestEvent(): Promise<ChapterEvent | null> {
       bodyEn: String(data.bodyEn ?? ""),
       detailUrl: String(data.detailUrl ?? "").trim() || null,
       prizes,
+      winnerAnnouncement: parseWinnerAnnouncement(data.winnerAnnouncement),
     };
   } catch {
     return null;

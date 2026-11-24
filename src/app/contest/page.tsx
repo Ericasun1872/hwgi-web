@@ -11,6 +11,7 @@ import {
   normalizeExternalUrl,
 } from "@/lib/linkify";
 import { buildMetadata, CONTEST_FALLBACK } from "@/lib/site";
+import type { ContestWinnerAnnouncement } from "@/lib/types";
 
 export const metadata: Metadata = buildMetadata({
   title: "문학 공모전",
@@ -53,8 +54,13 @@ export default async function ContestPage() {
           remote.prizes && remote.prizes.length > 0
             ? remote.prizes
             : CONTEST_FALLBACK.prizes,
+        winnerAnnouncement: remote.winnerAnnouncement ?? null,
       }
-    : { ...CONTEST_FALLBACK, detailUrl: null };
+    : {
+        ...CONTEST_FALLBACK,
+        detailUrl: null,
+        winnerAnnouncement: null as ContestWinnerAnnouncement | null,
+      };
 
   return (
     <div className="page">

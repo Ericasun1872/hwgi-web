@@ -19,7 +19,7 @@ export default function AdminContestPage() {
         <p>
           Contest management
           <span className="en">
-            운영진·회장 — 공모전 안내 수정과 업데이트 포스트를 올립니다.
+            운영진·회장 — 수상자 명단, 공모전 안내, 업데이트 포스트를 수정합니다.
           </span>
         </p>
       </header>

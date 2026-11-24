@@ -2169,6 +2169,61 @@ img {
   font: inherit;
 }
 
+.admin-winners-form {
+  max-width: 46rem;
+}
+
+.admin-winner-division {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: none;
+}
+
+.admin-winner-division legend {
+  margin-bottom: 0.75rem;
+  font-family: var(--font-display), serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.admin-winner-division legend small {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: var(--font-body), serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.admin-winner-group {
+  margin: 0 0 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(10, 42, 74, 0.12);
+}
+
+.admin-winner-card {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0.75rem 0;
+  padding: 0.85rem;
+  border: 1px solid rgba(10, 42, 74, 0.14);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.admin-winner-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem 0.75rem;
+}
+
+.admin-winner-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+}
+
 .admin-contest-thumb {
   margin-top: 0.5rem;
   max-width: 12rem;
@@ -2517,7 +2572,8 @@ img {
 }
 
 @media (max-width: 700px) {
-  .admin-prize-row {
+  .admin-prize-row,
+  .admin-winner-card__grid {
     grid-template-columns: 1fr;
   }
 }

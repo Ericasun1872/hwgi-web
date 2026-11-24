@@ -68,11 +68,34 @@ export type ChapterEvent = {
   /** 공모전 상세 요강 등 외부 안내 페이지 */
   detailUrl?: string | null;
   prizes?: ContestPrize[];
+  /** 운영진이 저장한 수상자 명단. 없으면 기본 발표문을 씁니다. */
+  winnerAnnouncement?: ContestWinnerAnnouncement | null;
 };
 
 export type ContestPrize = {
   place: string;
   amount: string;
+};
+
+export type ContestWinner = {
+  genreKo: string;
+  genreEn: string;
+  nameKo: string;
+  nameEn: string;
+  titleKo: string;
+  titleEn: string;
+};
+
+export type ContestWinnerGroup = {
+  id: string;
+  labelKo: string;
+  labelEn: string;
+  winners: ContestWinner[];
+};
+
+export type ContestWinnerAnnouncement = {
+  korean: ContestWinnerGroup[];
+  sijo: ContestWinnerGroup[];
 };
 
 export type ContestUpdate = {

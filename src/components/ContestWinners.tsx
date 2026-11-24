@@ -1,157 +1,18 @@
-type Winner = {
-  genreKo: string;
-  genreEn: string;
-  nameKo: string;
-  nameEn: string;
-  titleKo: string;
-  titleEn: string;
-};
+import { DEFAULT_WINNER_ANNOUNCEMENT } from "@/lib/contest-winners";
+import type {
+  ContestWinnerAnnouncement,
+  ContestWinnerGroup,
+} from "@/lib/types";
 
-type Group = {
-  id: string;
-  labelKo: string;
-  labelEn: string;
-  winners: Winner[];
-};
-
-const KOREAN_GROUPS: Group[] = [
-  {
-    id: "grand",
-    labelKo: "대상 (Grand Prize)",
-    labelEn: "Grand Prize",
-    winners: [
-      {
-        genreKo: "시 부문",
-        genreEn: "Poetry",
-        nameKo: "양안나",
-        nameEn: "Anna Yang",
-        titleKo: "간장꽃",
-        titleEn: "Ganjang-kkot",
-      },
-    ],
-  },
-  {
-    id: "main",
-    labelKo: "본상 (Main Prize)",
-    labelEn: "Main Prize",
-    winners: [
-      {
-        genreKo: "시 부문",
-        genreEn: "Poetry",
-        nameKo: "김부연 (Booyeon Kim)",
-        nameEn: "Booyeon Kim",
-        titleKo: "눈의 말",
-        titleEn: "Nun-ui Mal",
-      },
-      {
-        genreKo: "소설 부문",
-        genreEn: "Fiction",
-        nameKo: "이제니",
-        nameEn: "Jenny Lee",
-        titleKo: "도시를 건너는 이방인들",
-        titleEn: "Dosi-reul Geonneoneun Ibangindeul",
-      },
-      {
-        genreKo: "수필 부문",
-        genreEn: "Essay",
-        nameKo: "이지은",
-        nameEn: "Jieun Lee",
-        titleKo: "부르지 못한 이름",
-        titleEn: "Bureuji Mothan Ireum",
-      },
-    ],
-  },
-  {
-    id: "mention",
-    labelKo: "입선 (Honorable Mention)",
-    labelEn: "Honorable Mention",
-    winners: [
-      {
-        genreKo: "시 부문",
-        genreEn: "Poetry",
-        nameKo: "강경",
-        nameEn: "Kyung Kang",
-        titleKo: "날개 실종 사건",
-        titleEn: "Nalgae Siljong Sageon",
-      },
-      {
-        genreKo: "시 부문",
-        genreEn: "Poetry",
-        nameKo: "조인숙",
-        nameEn: "Insook Cho",
-        titleKo: "종이 봉투",
-        titleEn: "Jongi Bongtu",
-      },
-      {
-        genreKo: "소설 부문",
-        genreEn: "Fiction",
-        nameKo: "이준호",
-        nameEn: "Junho Lee",
-        titleKo: "로스트",
-        titleEn: "Lost",
-      },
-      {
-        genreKo: "수필 부문",
-        genreEn: "Essay",
-        nameKo: "장 케일린",
-        nameEn: "Caitlyn Jang",
-        titleKo: "선을 넘은 시간",
-        titleEn: "Seon-eul Neomeun Sigan",
-      },
-    ],
-  },
-];
-
-const SIJO_GROUPS: Group[] = [
-  {
-    id: "general",
-    labelKo: "일반부 (General Division)",
-    labelEn: "General Division",
-    winners: [
-      {
-        genreKo: "수상작",
-        genreEn: "Winner",
-        nameKo: "강영자",
-        nameEn: "Youngja Kang",
-        titleKo: "Chuseok (추석)",
-        titleEn: "Chuseok",
-      },
-    ],
-  },
-  {
-    id: "student",
-    labelKo: "학생부 (Student Division)",
-    labelEn: "Student Division",
-    winners: [
-      {
-        genreKo: "1등",
-        genreEn: "1st Place",
-        nameKo: "Ayn Chung",
-        nameEn: "Ayn Chung",
-        titleKo: "switch",
-        titleEn: "switch",
-      },
-      {
-        genreKo: "2등",
-        genreEn: "2nd Place",
-        nameKo: "Cora Harley",
-        nameEn: "Cora Harley",
-        titleKo: "bonfire",
-        titleEn: "bonfire",
-      },
-      {
-        genreKo: "3등",
-        genreEn: "3rd Place",
-        nameKo: "Hangul Kim",
-        nameEn: "Hangul Kim",
-        titleKo: "Paper plane",
-        titleEn: "Paper plane",
-      },
-    ],
-  },
-];
-
-function WinnerGroup({ group }: { group: Group }) {
+function WinnerGroup({ group }: { group: ContestWinnerGroup }) {
+  const winners = group.winners.filter(
+    (winner) =>
+      winner.nameKo ||
+      winner.nameEn ||
+      winner.titleKo ||
+      winner.titleEn,
+  );
+  if (winners.length === 0 && !group.labelKo && !group.labelEn) return null;
   return (
     <div className="winner-group">
       <h3>
@@ -159,7 +20,7 @@ function WinnerGroup({ group }: { group: Group }) {
         <small>{group.labelEn}</small>
       </h3>
       <ul>
-        {group.winners.map((winner) => (
+        {winners.map((winner) => (
           <li key={`${group.id}-${winner.nameKo}-${winner.titleKo}`}>
             <p>
               {winner.genreKo}: {winner.nameKo} — 「{winner.titleKo}」
@@ -174,7 +35,12 @@ function WinnerGroup({ group }: { group: Group }) {
   );
 }
 
-export function ContestWinners() {
+export function ContestWinners({
+  announcement,
+}: {
+  announcement?: ContestWinnerAnnouncement | null;
+}) {
+  const list = announcement ?? DEFAULT_WINNER_ANNOUNCEMENT;
   return (
     <section className="contest-winners" aria-labelledby="contest-winners">
       <h2 id="contest-winners">
@@ -226,7 +92,7 @@ export function ContestWinners() {
         1. 한국어 문학 부문
         <small>Korean Literature Division</small>
       </h3>
-      {KOREAN_GROUPS.map((group) => (
+      {list.korean.map((group) => (
         <WinnerGroup key={group.id} group={group} />
       ))}
 
@@ -234,7 +100,7 @@ export function ContestWinners() {
         2. 영어시조(English Sijo) 부문
         <small>English Sijo Division</small>
       </h3>
-      {SIJO_GROUPS.map((group) => (
+      {list.sijo.map((group) => (
         <WinnerGroup key={group.id} group={group} />
       ))}
 
