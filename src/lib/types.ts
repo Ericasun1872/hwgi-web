@@ -98,6 +98,38 @@ export type ContestWinnerAnnouncement = {
   sijo: ContestWinnerGroup[];
 };
 
+export type ContestCopyBlock = {
+  id: string;
+  ko: string;
+  en: string;
+  /** 본문 대신 소제목으로 표시 */
+  heading?: boolean;
+};
+
+/** 공모전 페이지에 보이는 발표 문장. 수상자 명단은 따로 둡니다. */
+export type ContestAnnouncementCopy = {
+  headingKo: string;
+  headingEn: string;
+  koreanDivisionKo: string;
+  koreanDivisionEn: string;
+  sijoDivisionKo: string;
+  sijoDivisionEn: string;
+  before: ContestCopyBlock[];
+  after: ContestCopyBlock[];
+};
+
+/** 방문자가 읽는 공모전 페이지. chapter_content에 저장합니다. */
+export type ContestPublication = ContestAnnouncementCopy & {
+  titleKo: string;
+  titleEn: string;
+  dateLabel: string;
+  bodyKo: string;
+  bodyEn: string;
+  detailUrl: string;
+  prizes: ContestPrize[];
+  winners: ContestWinnerAnnouncement;
+};
+
 export type ContestUpdate = {
   id: string;
   title: string;

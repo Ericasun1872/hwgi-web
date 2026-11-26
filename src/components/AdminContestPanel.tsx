@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useState } from "react";
+import { AdminCopyFields } from "@/components/AdminCopyFields";
 import { AdminWinnersForm } from "@/components/AdminWinnersForm";
 import { useAuth } from "@/components/AuthProvider";
 import {
@@ -9,15 +10,16 @@ import {
   createContestUpdate,
   deleteContestUpdate,
   getContestEventClient,
+  getContestPublicationClient,
   listContestUpdatesClient,
   saveContestEvent,
-  saveContestWinners,
+  saveContestPublication,
   type ContestInput,
 } from "@/lib/admin-content";
-import { cloneWinnerAnnouncement } from "@/lib/contest-winners";
+import { defaultContestPublication } from "@/lib/contest-winners";
 import { fileToOptimizedBase64 } from "@/lib/board-write";
 import { isAdminEmail, memberDisplayName } from "@/lib/member";
-import type { ContestUpdate, ContestWinnerAnnouncement } from "@/lib/types";
+import type { ContestPublication, ContestUpdate } from "@/lib/types";
 
 export function AdminContestPanel({
   embedded = false,
@@ -30,7 +32,7 @@ export function AdminContestPanel({
   const isAdmin = isAdminEmail(user?.email ?? member?.email);
 
   const [draft, setDraft] = useState<ContestInput | null>(null);
-  const [winners, setWinners] = useState<ContestWinnerAnnouncement | null>(
+  const [publication, setPublication] = useState<ContestPublication | null>(
     null,
   );
   const [updates, setUpdates] = useState<ContestUpdate[]>([]);
@@ -47,14 +49,25 @@ export function AdminContestPanel({
     setLoading(true);
     setError(null);
     try {
-      const [contest, feed] = await Promise.all([
-        getContestEventClient(),
-        listContestUpdatesClient(),
+      const [contest, feed, published] = await Promise.all([
+        getContestEventClient().catch(() => null),
+        listContestUpdatesClient().catch(() => []),
+        getContestPublicationClient().catch(() => null),
       ]);
       setDraft(contestToInput(contest));
-      setWinners(
-        cloneWinnerAnnouncement(contest?.winnerAnnouncement ?? undefined),
-      );
+      const next = published ?? defaultContestPublication();
+      if (!published && contest) {
+        next.titleKo = contest.titleKo || next.titleKo;
+        next.titleEn = contest.titleEn || next.titleEn;
+        next.dateLabel = contest.dateLabel || next.dateLabel;
+        next.bodyKo = contest.bodyKo || "";
+        next.bodyEn = contest.bodyEn || "";
+        next.detailUrl = contest.detailUrl || "";
+        if (contest.prizes && contest.prizes.length > 0) {
+          next.prizes = contest.prizes;
+        }
+      }
+      setPublication(next);
       setUpdates(feed);
     } catch {
       setError("공모전 정보를 불러오지 못했습니다.");
@@ -124,18 +137,20 @@ export function AdminContestPanel({
     }
   }
 
-  async function onSaveWinners(e: FormEvent) {
+  async function onSavePublication(e: FormEvent) {
     e.preventDefault();
-    if (!winners) return;
+    if (!publication) return;
     setBusy(true);
     setError(null);
     try {
-      await saveContestWinners(winners);
-      setNotice("수상자 명단을 저장했습니다. 공모전 페이지에 반영됩니다.");
+      await saveContestPublication(publication);
+      setNotice("공모전 내용을 저장했습니다. 페이지에 반영됩니다.");
       await reload();
       onChanged?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "수상자 명단 저장에 실패했습니다.");
+      setError(
+        err instanceof Error ? err.message : "공모전 내용 저장에 실패했습니다.",
+      );
     } finally {
       setBusy(false);
     }
@@ -227,54 +242,187 @@ export function AdminContestPanel({
         </p>
       ) : null}
 
-      {loading || !draft || !winners ? (
+      {loading || !draft || !publication ? (
         <p className="empty-state">불러오는 중…</p>
       ) : (
         <>
           <section className="admin-section" aria-labelledby="contest-winners-edit">
-            <h2 id="contest-winners-edit">수상자 명단</h2>
+            <h2 id="contest-winners-edit">공모전 내용</h2>
             <p className="admin-section__lead">
-              이름, 영문 이름, 부문, 작품 제목을 고친 뒤 저장하면 공모전
-              페이지의 수상자 발표에 반영됩니다. 비워 둔 줄은 저장할 때
-              빠집니다.
+              아래 글을 고치고 저장하면 공모전 페이지의 문장과 수상자 이름이
+              그대로 바뀝니다. 비워 둔 문단과 수상자 줄은 저장할 때 빠집니다.
             </p>
+            <div className="compose-form admin-winners-form">
+              <div className="admin-winner-card__grid">
+                <label>
+                  페이지 제목 (한글)
+                  <input
+                    value={publication.titleKo}
+                    onChange={(e) =>
+                      setPublication((current) =>
+                        current ? { ...current, titleKo: e.target.value } : current,
+                      )
+                    }
+                  />
+                </label>
+                <label>
+                  페이지 제목 (영문)
+                  <input
+                    value={publication.titleEn}
+                    onChange={(e) =>
+                      setPublication((current) =>
+                        current ? { ...current, titleEn: e.target.value } : current,
+                      )
+                    }
+                  />
+                </label>
+              </div>
+              <label>
+                일정
+                <input
+                  value={publication.dateLabel}
+                  onChange={(e) =>
+                    setPublication((current) =>
+                      current ? { ...current, dateLabel: e.target.value } : current,
+                    )
+                  }
+                />
+              </label>
+              <label>
+                안내 본문 (한글)
+                <textarea
+                  rows={4}
+                  value={publication.bodyKo}
+                  onChange={(e) =>
+                    setPublication((current) =>
+                      current ? { ...current, bodyKo: e.target.value } : current,
+                    )
+                  }
+                />
+              </label>
+              <label>
+                안내 본문 (영문)
+                <textarea
+                  rows={4}
+                  value={publication.bodyEn}
+                  onChange={(e) =>
+                    setPublication((current) =>
+                      current ? { ...current, bodyEn: e.target.value } : current,
+                    )
+                  }
+                />
+              </label>
+              <label>
+                상세 안내 링크
+                <input
+                  type="url"
+                  inputMode="url"
+                  placeholder="https://…"
+                  value={publication.detailUrl}
+                  onChange={(e) =>
+                    setPublication((current) =>
+                      current ? { ...current, detailUrl: e.target.value } : current,
+                    )
+                  }
+                />
+              </label>
+              <fieldset className="admin-prize-fields">
+                <legend>시상 안내</legend>
+                {publication.prizes.map((prize, index) => (
+                  <div key={index} className="admin-prize-row">
+                    <input
+                      aria-label={`시상명 ${index + 1}`}
+                      placeholder="예: 대상"
+                      value={prize.place}
+                      onChange={(e) =>
+                        setPublication((current) => {
+                          if (!current) return current;
+                          const prizes = current.prizes.map((item, i) =>
+                            i === index ? { ...item, place: e.target.value } : item,
+                          );
+                          return { ...current, prizes };
+                        })
+                      }
+                    />
+                    <input
+                      aria-label={`시상 내용 ${index + 1}`}
+                      placeholder="예: 상금 안내"
+                      value={prize.amount}
+                      onChange={(e) =>
+                        setPublication((current) => {
+                          if (!current) return current;
+                          const prizes = current.prizes.map((item, i) =>
+                            i === index
+                              ? { ...item, amount: e.target.value }
+                              : item,
+                          );
+                          return { ...current, prizes };
+                        })
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="admin-member-row__remove"
+                      onClick={() =>
+                        setPublication((current) =>
+                          current
+                            ? {
+                                ...current,
+                                prizes: current.prizes.filter((_, i) => i !== index),
+                              }
+                            : current,
+                        )
+                      }
+                    >
+                      삭제
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="cta cta--ghost"
+                  onClick={() =>
+                    setPublication((current) =>
+                      current
+                        ? {
+                            ...current,
+                            prizes: [...current.prizes, { place: "", amount: "" }],
+                          }
+                        : current,
+                    )
+                  }
+                >
+                  시상 항목 추가
+                </button>
+              </fieldset>
+              <AdminCopyFields
+                value={publication}
+                onChange={(copy) =>
+                  setPublication((current) =>
+                    current ? { ...current, ...copy } : current,
+                  )
+                }
+              />
+            </div>
             <AdminWinnersForm
-              value={winners}
+              value={publication.winners}
               busy={busy}
-              onChange={setWinners}
-              onSubmit={(event) => void onSaveWinners(event)}
+              onChange={(winners) =>
+                setPublication((current) =>
+                  current ? { ...current, winners } : current,
+                )
+              }
+              onSubmit={(event) => void onSavePublication(event)}
             />
           </section>
 
           <section className="admin-section" aria-labelledby="contest-info-heading">
-            <h2 id="contest-info-heading">공모전 안내</h2>
+            <h2 id="contest-info-heading">장소 기록</h2>
             <p className="admin-section__lead">
-              제목·일정·장소·본문·시상 안내를 수정합니다. 저장 후 웹 공모전
-              페이지에 반영됩니다.
+              장소는 내부 기록입니다. 페이지에 보이는 제목, 일정, 본문, 시상,
+              수상자 글은 위의 「공모전 내용」에서 고칩니다.
             </p>
             <form className="compose-form admin-content-form" onSubmit={onSaveContest}>
-              <label>
-                제목 (한글) *
-                <input
-                  required
-                  value={draft.titleKo}
-                  onChange={(e) => patchDraft({ titleKo: e.target.value })}
-                />
-              </label>
-              <label>
-                제목 (영문)
-                <input
-                  value={draft.titleEn}
-                  onChange={(e) => patchDraft({ titleEn: e.target.value })}
-                />
-              </label>
-              <label>
-                일정
-                <input
-                  value={draft.dateLabel}
-                  onChange={(e) => patchDraft({ dateLabel: e.target.value })}
-                />
-              </label>
               <label>
                 장소 (한글)
                 <input
@@ -289,88 +437,9 @@ export function AdminContestPanel({
                   onChange={(e) => patchDraft({ locationEn: e.target.value })}
                 />
               </label>
-              <label>
-                사이트 상세내용 링크
-                <input
-                  type="url"
-                  inputMode="url"
-                  placeholder="https://…"
-                  value={draft.detailUrl}
-                  onChange={(e) => patchDraft({ detailUrl: e.target.value })}
-                />
-              </label>
-              <label>
-                안내 본문 (한글)
-                <textarea
-                  rows={7}
-                  value={draft.bodyKo}
-                  onChange={(e) => patchDraft({ bodyKo: e.target.value })}
-                />
-              </label>
-              <label>
-                안내 본문 (영문)
-                <textarea
-                  rows={6}
-                  value={draft.bodyEn}
-                  onChange={(e) => patchDraft({ bodyEn: e.target.value })}
-                />
-              </label>
-
-              <fieldset className="admin-prize-fields">
-                <legend>시상 안내</legend>
-                {draft.prizes.map((prize, index) => (
-                  <div key={index} className="admin-prize-row">
-                    <input
-                      aria-label={`시상명 ${index + 1}`}
-                      placeholder="예: 대상"
-                      value={prize.place}
-                      onChange={(e) => {
-                        const prizes = draft.prizes.map((p, i) =>
-                          i === index ? { ...p, place: e.target.value } : p,
-                        );
-                        patchDraft({ prizes });
-                      }}
-                    />
-                    <input
-                      aria-label={`시상 내용 ${index + 1}`}
-                      placeholder="예: 상금 안내"
-                      value={prize.amount}
-                      onChange={(e) => {
-                        const prizes = draft.prizes.map((p, i) =>
-                          i === index ? { ...p, amount: e.target.value } : p,
-                        );
-                        patchDraft({ prizes });
-                      }}
-                    />
-                    <button
-                      type="button"
-                      className="admin-member-row__remove"
-                      onClick={() =>
-                        patchDraft({
-                          prizes: draft.prizes.filter((_, i) => i !== index),
-                        })
-                      }
-                    >
-                      삭제
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  className="cta cta--ghost"
-                  onClick={() =>
-                    patchDraft({
-                      prizes: [...draft.prizes, { place: "", amount: "" }],
-                    })
-                  }
-                >
-                  시상 항목 추가
-                </button>
-              </fieldset>
-
               <div className="compose-form__actions">
                 <button type="submit" className="cta cta--primary" disabled={busy}>
-                  {busy ? "저장 중…" : "공모전 안내 저장"}
+                  {busy ? "저장 중…" : "장소 저장"}
                 </button>
               </div>
             </form>

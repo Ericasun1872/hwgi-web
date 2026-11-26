@@ -13,13 +13,16 @@ import {
 import { getDb } from "@/lib/firebase";
 import { extractFirstUrl, isBareUrl } from "@/lib/linkify";
 import {
+  defaultContestPublication,
+  parseContestPublication,
   parseWinnerAnnouncement,
-  sanitizeWinnerAnnouncement,
+  sanitizeContestPublication,
 } from "@/lib/contest-winners";
 import { CONTEST_FALLBACK } from "@/lib/site";
 import type {
   ChapterEvent,
   ContestPrize,
+  ContestPublication,
   ContestUpdate,
   ContestWinnerAnnouncement,
 } from "@/lib/types";
@@ -153,19 +156,33 @@ export async function saveContestEvent(input: ContestInput): Promise<void> {
   );
 }
 
-export async function saveContestWinners(
-  announcement: ContestWinnerAnnouncement,
+export async function getContestPublicationClient(): Promise<ContestPublication | null> {
+  const snap = await getDoc(doc(getDb(), "chapter_content", "main"));
+  if (!snap.exists()) return null;
+  return parseContestPublication(snap.data().contestPublication);
+}
+
+/** 방문자가 보는 공모전 글. 공개로 읽을 수 있는 chapter_content에 저장합니다. */
+export async function saveContestPublication(
+  publication: ContestPublication,
 ): Promise<void> {
-  const winnerAnnouncement = sanitizeWinnerAnnouncement(announcement);
+  const contestPublication = sanitizeContestPublication(publication);
   await setDoc(
-    doc(getDb(), "chapter_events", CONTEST_EVENT_ID),
+    doc(getDb(), "chapter_content", "main"),
     {
-      id: CONTEST_EVENT_ID,
-      winnerAnnouncement,
+      contestPublication,
       updatedAt: serverTimestamp(),
     },
     { merge: true },
   );
+}
+
+export async function saveContestWinners(
+  announcement: ContestWinnerAnnouncement,
+): Promise<void> {
+  const current =
+    (await getContestPublicationClient()) ?? defaultContestPublication();
+  await saveContestPublication({ ...current, winners: announcement });
 }
 
 export async function createContestUpdate(input: {

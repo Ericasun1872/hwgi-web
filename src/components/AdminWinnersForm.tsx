@@ -284,7 +284,7 @@ export function AdminWinnersForm({ value, busy, onChange, onSubmit }: Props) {
       ))}
       <div className="compose-form__actions">
         <button type="submit" className="cta cta--primary" disabled={busy}>
-          {busy ? "저장 중…" : "수상자 명단 저장"}
+          {busy ? "저장 중…" : "공모전 내용 저장"}
         </button>
       </div>
     </form>

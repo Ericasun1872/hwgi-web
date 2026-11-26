@@ -8,6 +8,7 @@ import { ContestUpdateCard } from "@/components/ContestUpdateCard";
 import { ContestWinners } from "@/components/ContestWinners";
 import {
   getContestEventClient,
+  getContestPublicationClient,
   listContestUpdatesClient,
 } from "@/lib/admin-content";
 import {
@@ -16,7 +17,11 @@ import {
   normalizeExternalUrl,
 } from "@/lib/linkify";
 import { CONTEST_FALLBACK } from "@/lib/site";
-import type { ContestUpdate, ContestWinnerAnnouncement } from "@/lib/types";
+import type {
+  ContestAnnouncementCopy,
+  ContestUpdate,
+  ContestWinnerAnnouncement,
+} from "@/lib/types";
 
 export type ContestView = {
   titleKo: string;
@@ -29,6 +34,7 @@ export type ContestView = {
   detailUrl: string | null;
   prizes: { place: string; amount: string }[];
   winnerAnnouncement: ContestWinnerAnnouncement | null;
+  announcementCopy: ContestAnnouncementCopy | null;
 };
 
 type Props = {
@@ -53,7 +59,15 @@ function toContestView(
   remote: Awaited<ReturnType<typeof getContestEventClient>>,
 ): ContestView {
   if (!remote) {
-    return { ...CONTEST_FALLBACK, detailUrl: null, winnerAnnouncement: null };
+    return {
+      ...CONTEST_FALLBACK,
+      bodyKo: "",
+      bodyEn: "",
+      detailUrl: null,
+      prizes: [],
+      winnerAnnouncement: null,
+      announcementCopy: null,
+    };
   }
   return {
     titleKo: remote.titleKo || CONTEST_FALLBACK.titleKo,
@@ -61,14 +75,31 @@ function toContestView(
     dateLabel: remote.dateLabel || CONTEST_FALLBACK.dateLabel,
     locationKo: remote.locationKo || CONTEST_FALLBACK.locationKo,
     locationEn: remote.locationEn || CONTEST_FALLBACK.locationEn,
-    bodyKo: remote.bodyKo || CONTEST_FALLBACK.bodyKo,
-    bodyEn: remote.bodyEn || CONTEST_FALLBACK.bodyEn,
+    bodyKo: "",
+    bodyEn: "",
     detailUrl: resolveDetailUrl(remote),
-    prizes:
-      remote.prizes && remote.prizes.length > 0
-        ? remote.prizes
-        : CONTEST_FALLBACK.prizes,
-    winnerAnnouncement: remote?.winnerAnnouncement ?? null,
+    prizes: remote.prizes ?? [],
+    winnerAnnouncement: remote.winnerAnnouncement ?? null,
+    announcementCopy: null,
+  };
+}
+
+function withPublication(
+  view: ContestView,
+  publication: Awaited<ReturnType<typeof getContestPublicationClient>>,
+): ContestView {
+  if (!publication) return view;
+  return {
+    ...view,
+    titleKo: publication.titleKo || view.titleKo,
+    titleEn: publication.titleEn || view.titleEn,
+    dateLabel: publication.dateLabel || view.dateLabel,
+    bodyKo: publication.bodyKo,
+    bodyEn: publication.bodyEn,
+    detailUrl: publication.detailUrl || view.detailUrl,
+    prizes: publication.prizes.length > 0 ? publication.prizes : view.prizes,
+    winnerAnnouncement: publication.winners,
+    announcementCopy: publication,
   };
 }
 
@@ -89,11 +120,12 @@ export function ContestPageClient({
 
   async function refreshView() {
     try {
-      const [remote, nextUpdates] = await Promise.all([
+      const [remote, nextUpdates, publication] = await Promise.all([
         getContestEventClient(),
         listContestUpdatesClient(),
+        getContestPublicationClient(),
       ]);
-      setContest(toContestView(remote));
+      setContest(withPublication(toContestView(remote), publication));
       setUpdates(nextUpdates);
     } catch {
       /* keep current */
@@ -160,7 +192,26 @@ export function ContestPageClient({
             <span className="contest-detail-link__en">Contest guidelines</span>
           </p>
         ) : null}
-        <ContestWinners announcement={contest.winnerAnnouncement} />
+        {contest.bodyKo ? (
+          <p className="event-card__body contest-copy">{contest.bodyKo}</p>
+        ) : null}
+        {contest.bodyEn ? (
+          <p className="event-card__body-en contest-copy">{contest.bodyEn}</p>
+        ) : null}
+        {contest.prizes.length > 0 ? (
+          <ul className="contest-prize-list">
+            {contest.prizes.map((prize) => (
+              <li key={`${prize.place}-${prize.amount}`}>
+                <strong>{prize.place}</strong>
+                <span>{prize.amount}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <ContestWinners
+          announcement={contest.winnerAnnouncement}
+          copy={contest.announcementCopy}
+        />
       </section>
 
       {updates.length > 0 ? (

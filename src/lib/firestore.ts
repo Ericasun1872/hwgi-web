@@ -9,7 +9,10 @@ import {
   type Timestamp,
 } from "firebase/firestore";
 import { getDb } from "./firebase";
-import { parseWinnerAnnouncement } from "./contest-winners";
+import {
+  parseContestPublication,
+  parseWinnerAnnouncement,
+} from "./contest-winners";
 import { isSuppressedPost } from "./content-suppression";
 import { BOARD_KINDS } from "./site";
 import type {
@@ -18,6 +21,7 @@ import type {
   BoardPost,
   ChapterContent,
   ChapterEvent,
+  ContestPublication,
   ContestUpdate,
   OrgRole,
 } from "./types";
@@ -262,6 +266,16 @@ export async function getChapterEvents(): Promise<ChapterEvent[]> {
     return events;
   } catch {
     return [];
+  }
+}
+
+export async function getContestPublication(): Promise<ContestPublication | null> {
+  try {
+    const snap = await getDoc(doc(getDb(), "chapter_content", "main"));
+    if (!snap.exists()) return null;
+    return parseContestPublication(snap.data().contestPublication);
+  } catch {
+    return null;
   }
 }
 

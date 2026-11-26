@@ -1,4 +1,7 @@
 import type {
+  ContestAnnouncementCopy,
+  ContestCopyBlock,
+  ContestPublication,
   ContestWinner,
   ContestWinnerAnnouncement,
   ContestWinnerGroup,
@@ -251,4 +254,201 @@ export function sanitizeWinnerAnnouncement(
       );
 
   return { korean: clean(source.korean), sijo: clean(source.sijo) };
+}
+
+export const DEFAULT_ANNOUNCEMENT_COPY: ContestAnnouncementCopy = {
+  headingKo: "제1회 한국작가회의 미주지회 문학공모전 수상자 발표",
+  headingEn: "Winners of the 1st WAKUSA Literary Contest",
+  koreanDivisionKo: "1. 한국어 문학 부문",
+  koreanDivisionEn: "Korean Literature Division",
+  sijoDivisionKo: "2. 영어시조(English Sijo) 부문",
+  sijoDivisionEn: "English Sijo Division",
+  before: [
+    {
+      id: "thanks",
+      ko: "한국작가회의 미주지회(WAKUSA)가 주최한 「제1회 문학공모전」에 깊은 관심과 소중한 작품을 보내주신 모든 응모자 여러분께 진심으로 감사드립니다.",
+      en: "The Writers Association of Korea USA Chapter (WAKUSA) extends its heartfelt gratitude to everyone who submitted their valuable works to the 1st Annual WAKUSA Literary Contest.",
+    },
+    {
+      id: "selection",
+      ko: "이번 공모전은 한국 중앙본부 심사위원단의 공정하고 엄정한 심사를 거쳐 수상작을 선정하였습니다. 당초 대상 1명, 본상 1명, 우수상 2명, 입선 3명을 선정할 계획이었으나, 각 장르의 우수 작품을 고르게 조명하기 위해 시·소설·수필 부문별 본상을 각각 선정하는 방식으로 시상 내역을 조정하였습니다. 또한 함께 진행된 영어시조(English Sijo) 공모전에도 학생부 54편을 비롯해 많은 작품이 응모하여 차세대와 현지 독자들의 뜨거운 관심을 확인할 수 있었습니다.",
+      en: "Following a rigorous and fair evaluation by the judging panel from the Writers Association of Korea headquarters, we are pleased to announce this year's winners. While the original plan was to select one Grand Prize, one Main Prize, two Excellence Awards, and three Honorable Mentions, the judging committee adjusted the award structure to select a Main Prize winner in each genre (Poetry, Fiction, and Essay) in order to recognize outstanding works across all categories equally. Furthermore, the inaugural English Sijo Contest drew enthusiastic participation, including 54 entries in the Student Division.",
+    },
+    {
+      id: "introduce",
+      ko: "수상하신 모든 분들께 진심으로 축하의 말씀을 전하며, 영예의 수상자 명단을 아래와 같이 발표합니다.",
+      en: "Warmest congratulations to all the winners!",
+    },
+  ],
+  after: [
+    {
+      id: "judges-title",
+      heading: true,
+      ko: "심사위원단 총평 요약",
+      en: "Judges' Remarks",
+    },
+    {
+      id: "judges",
+      ko: "한국어 문학 부문에서는 각 장르의 문학적 성취와 디아스포라의 섬세한 시선이 돋보이는 작품들이 고르게 선정되었습니다. 영어시조 부문에서는 사물을 바라보는 학생들의 날카로운 시선이 돋보였으며, 일반부 수상작 「Chuseok」은 마지막 연의 아름다운 마무리가 깊은 인상을 남겼습니다.",
+      en: "Across the Korean literature categories, the selected works demonstrated strong literary craftsmanship and nuanced perspectives. In the English Sijo division, the judges praised the student entrants for their sharp, observant perspectives on everyday objects, while noting that Youngja Kang's \"Chuseok\" left a lasting impression with its poignant and graceful closing stanza.",
+    },
+    {
+      id: "schedule",
+      ko: "향후 일정 안내: 시상식 일정 및 수상작 작품집(E-book) 게재 일정은 추후 공지사항 및 개별 연락을 통해 안내해 드릴 예정입니다.",
+      en: "Upcoming Schedule: Details regarding the awards ceremony and the digital anthology (E-book) publication of the winning works will be announced separately and sent directly to the winners.",
+    },
+    {
+      id: "thanks-again",
+      ko: "다시 한번 참여해 주신 모든 분께 감사드리며, 앞으로도 미주 한인 문학의 발전을 위해 많은 성원 부탁드립니다.",
+      en: "Thank you once again for your passion and support for Korean-American literature.",
+    },
+    {
+      id: "signoff",
+      ko: "한국작가회의 미주지회",
+      en: "Writers Association of Korea USA Chapter (WAKUSA)",
+    },
+  ],
+};
+
+export function defaultContestPublication(): ContestPublication {
+  return {
+    titleKo: "2026 미주지회 문학 공모전",
+    titleEn: "2026 USA Chapter Literary Contest",
+    dateLabel: "접수 · 심사 일정은 앱·웹 공지를 확인해 주세요",
+    bodyKo: "",
+    bodyEn: "",
+    detailUrl: "",
+    prizes: [],
+    ...cloneAnnouncementCopy(DEFAULT_ANNOUNCEMENT_COPY),
+    winners: cloneWinnerAnnouncement(),
+  };
+}
+
+export function cloneAnnouncementCopy(
+  source: ContestAnnouncementCopy = DEFAULT_ANNOUNCEMENT_COPY,
+): ContestAnnouncementCopy {
+  return {
+    headingKo: source.headingKo,
+    headingEn: source.headingEn,
+    koreanDivisionKo: source.koreanDivisionKo,
+    koreanDivisionEn: source.koreanDivisionEn,
+    sijoDivisionKo: source.sijoDivisionKo,
+    sijoDivisionEn: source.sijoDivisionEn,
+    before: source.before.map(cloneBlock),
+    after: source.after.map(cloneBlock),
+  };
+}
+
+function cloneBlock(block: ContestCopyBlock): ContestCopyBlock {
+  return {
+    id: block.id,
+    ko: block.ko,
+    en: block.en,
+    heading: Boolean(block.heading),
+  };
+}
+
+export function emptyCopyBlock(): ContestCopyBlock {
+  return {
+    id: `block_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+    ko: "",
+    en: "",
+    heading: false,
+  };
+}
+
+function parseBlocks(raw: unknown): ContestCopyBlock[] | null {
+  if (!Array.isArray(raw)) return null;
+  return raw.map((item, index) => {
+    const row = (item ?? {}) as Record<string, unknown>;
+    return {
+      id: asText(row.id) || `block_${index + 1}`,
+      ko: asText(row.ko),
+      en: asText(row.en),
+      heading: row.heading === true,
+    };
+  });
+}
+
+export function parseAnnouncementCopy(raw: unknown): ContestAnnouncementCopy | null {
+  if (!raw || typeof raw !== "object") return null;
+  const data = raw as Record<string, unknown>;
+  const before = parseBlocks(data.before);
+  const after = parseBlocks(data.after);
+  if (!before && !after && !asText(data.headingKo)) return null;
+  const base = DEFAULT_ANNOUNCEMENT_COPY;
+  return {
+    headingKo: asText(data.headingKo) || base.headingKo,
+    headingEn: asText(data.headingEn) || base.headingEn,
+    koreanDivisionKo: asText(data.koreanDivisionKo) || base.koreanDivisionKo,
+    koreanDivisionEn: asText(data.koreanDivisionEn) || base.koreanDivisionEn,
+    sijoDivisionKo: asText(data.sijoDivisionKo) || base.sijoDivisionKo,
+    sijoDivisionEn: asText(data.sijoDivisionEn) || base.sijoDivisionEn,
+    before: before ?? base.before.map(cloneBlock),
+    after: after ?? base.after.map(cloneBlock),
+  };
+}
+
+export function parseContestPublication(raw: unknown): ContestPublication | null {
+  if (!raw || typeof raw !== "object") return null;
+  const data = raw as Record<string, unknown>;
+  const copy = parseAnnouncementCopy(data);
+  const winners = parseWinnerAnnouncement(data.winners);
+  if (!copy && !winners && !asText(data.titleKo)) return null;
+  const base = defaultContestPublication();
+  const prizesRaw = Array.isArray(data.prizes) ? data.prizes : [];
+  return {
+    ...(copy ?? cloneAnnouncementCopy()),
+    titleKo: asText(data.titleKo) || base.titleKo,
+    titleEn: asText(data.titleEn) || base.titleEn,
+    dateLabel: asText(data.dateLabel) || base.dateLabel,
+    bodyKo: asText(data.bodyKo),
+    bodyEn: asText(data.bodyEn),
+    detailUrl: asText(data.detailUrl),
+    prizes: prizesRaw
+      .map((item) => {
+        const row = (item ?? {}) as Record<string, unknown>;
+        return { place: asText(row.place), amount: asText(row.amount) };
+      })
+      .filter((prize) => prize.place || prize.amount),
+    winners: winners ?? cloneWinnerAnnouncement(),
+  };
+}
+
+export function sanitizeContestPublication(
+  source: ContestPublication,
+): ContestPublication {
+  const cleanBlocks = (blocks: ContestCopyBlock[]) =>
+    blocks
+      .map((block) => ({
+        id: block.id.trim() || emptyCopyBlock().id,
+        ko: block.ko.trim(),
+        en: block.en.trim(),
+        heading: Boolean(block.heading),
+      }))
+      .filter((block) => block.ko || block.en);
+
+  return {
+    titleKo: source.titleKo.trim(),
+    titleEn: source.titleEn.trim(),
+    dateLabel: source.dateLabel.trim(),
+    bodyKo: source.bodyKo.trim(),
+    bodyEn: source.bodyEn.trim(),
+    detailUrl: source.detailUrl.trim(),
+    headingKo: source.headingKo.trim(),
+    headingEn: source.headingEn.trim(),
+    koreanDivisionKo: source.koreanDivisionKo.trim(),
+    koreanDivisionEn: source.koreanDivisionEn.trim(),
+    sijoDivisionKo: source.sijoDivisionKo.trim(),
+    sijoDivisionEn: source.sijoDivisionEn.trim(),
+    before: cleanBlocks(source.before),
+    after: cleanBlocks(source.after),
+    prizes: source.prizes
+      .map((prize) => ({
+        place: prize.place.trim(),
+        amount: prize.amount.trim(),
+      }))
+      .filter((prize) => prize.place || prize.amount),
+    winners: sanitizeWinnerAnnouncement(source.winners),
+  };
 }

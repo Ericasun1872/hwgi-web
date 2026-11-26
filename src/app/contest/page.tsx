@@ -4,14 +4,13 @@ import { ContestAdminLink } from "@/components/ContestAdminLink";
 import { ContestPageClient } from "@/components/ContestPageClient";
 import { CtaLink } from "@/components/CtaLink";
 import { PolicyLinks } from "@/components/PolicyLinks";
-import { getContestEvent, getContestUpdates } from "@/lib/firestore";
+import { getContestEvent, getContestPublication, getContestUpdates } from "@/lib/firestore";
 import {
   extractFirstUrl,
   isBareUrl,
   normalizeExternalUrl,
 } from "@/lib/linkify";
 import { buildMetadata, CONTEST_FALLBACK } from "@/lib/site";
-import type { ContestWinnerAnnouncement } from "@/lib/types";
 
 export const metadata: Metadata = buildMetadata({
   title: "문학 공모전",
@@ -36,30 +35,41 @@ function resolveDetailUrl(input: {
 }
 
 export default async function ContestPage() {
-  const [remote, updates] = await Promise.all([
+  const [remote, updates, publication] = await Promise.all([
     getContestEvent(),
     getContestUpdates(),
+    getContestPublication(),
   ]);
   const contest = remote
     ? {
-        titleKo: remote.titleKo || CONTEST_FALLBACK.titleKo,
-        titleEn: remote.titleEn || CONTEST_FALLBACK.titleEn,
-        dateLabel: remote.dateLabel || CONTEST_FALLBACK.dateLabel,
+        titleKo: publication?.titleKo || remote.titleKo || CONTEST_FALLBACK.titleKo,
+        titleEn: publication?.titleEn || remote.titleEn || CONTEST_FALLBACK.titleEn,
+        dateLabel: publication?.dateLabel || remote.dateLabel || CONTEST_FALLBACK.dateLabel,
         locationKo: remote.locationKo || CONTEST_FALLBACK.locationKo,
         locationEn: remote.locationEn || CONTEST_FALLBACK.locationEn,
-        bodyKo: remote.bodyKo || CONTEST_FALLBACK.bodyKo,
-        bodyEn: remote.bodyEn || CONTEST_FALLBACK.bodyEn,
-        detailUrl: resolveDetailUrl(remote),
+        bodyKo: publication?.bodyKo || "",
+        bodyEn: publication?.bodyEn || "",
+        detailUrl: publication?.detailUrl || resolveDetailUrl(remote),
         prizes:
-          remote.prizes && remote.prizes.length > 0
-            ? remote.prizes
-            : CONTEST_FALLBACK.prizes,
-        winnerAnnouncement: remote.winnerAnnouncement ?? null,
+          publication?.prizes && publication.prizes.length > 0
+            ? publication.prizes
+            : remote.prizes && remote.prizes.length > 0
+              ? remote.prizes
+              : [],
+        winnerAnnouncement: publication?.winners ?? remote.winnerAnnouncement ?? null,
+        announcementCopy: publication,
       }
     : {
         ...CONTEST_FALLBACK,
-        detailUrl: null,
-        winnerAnnouncement: null as ContestWinnerAnnouncement | null,
+        bodyKo: publication?.bodyKo || "",
+        bodyEn: publication?.bodyEn || "",
+        titleKo: publication?.titleKo || CONTEST_FALLBACK.titleKo,
+        titleEn: publication?.titleEn || CONTEST_FALLBACK.titleEn,
+        dateLabel: publication?.dateLabel || CONTEST_FALLBACK.dateLabel,
+        detailUrl: publication?.detailUrl || null,
+        prizes: publication?.prizes ?? [],
+        winnerAnnouncement: publication?.winners ?? null,
+        announcementCopy: publication,
       };
 
   return (
